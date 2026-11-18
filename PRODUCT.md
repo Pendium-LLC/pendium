@@ -1,48 +1,57 @@
 # Pendium — Product Context
 
 ## Product Purpose
-Pendium is an AI-first design agency that helps enterprises bring AI-infused design into their products through design research, product design, AI product strategy, and frontend engineering. The site functions as a business development tool: establishing authority, communicating positioning, and driving inbound from enterprise product teams.
+
+Pendium is an AI-powered product studio. It designs, builds and ships its own products. The products cover very different kinds of work: a professional credential, a developer tool and a game.
+
+The site at pendium.co has two jobs:
+
+1. Show that one studio makes all of these products.
+2. Send each visitor to the product that fits them.
+
+The site is not a services pitch. It does not sell design or engineering work to clients.
 
 ## Register
+
 brand
 
 ## Users
-- **Primary**: Product leaders, design directors, and CTOs at enterprises integrating AI into existing products
-- **Secondary**: AI-native startup teams who need senior design + engineering capacity
-- **Decision context**: Evaluating whether this agency has the specific expertise to help them with AI product design — not general design, not AI tooling, specifically the intersection
+
+- **Primary:** people who might use one of the products. A professional who wants to prove their AI skills. A developer who wants an AI agent to make phone calls. A player who likes building and management games.
+- **Secondary:** people curious about the studio itself, such as press, partners and future collaborators.
+- **Decision context:** the visitor decides in a few seconds which product is for them. Each card must say what the product is and who it is for in one sentence.
+
+## Products
+
+| No. | Product | Category | What it is | Link |
+|---|---|---|---|---|
+| 001 | Emeri | Education | The professional standard for AI proficiency. A free 15-minute check grades how you work with AI. Certify the result and it becomes a verifiable credential. | emeri.org |
+| 002 | Hollerback | Developer tool | Lets an AI agent call and text people. The agent sends a goal and facts. Hollerback makes the call, follows up after voicemail and returns one structured result. | hollerback.dev |
+| 003 | Lofty Ambitions | Game | A pixel-art tower game. The player adds floors, rooms and elevators, fills the tower with tenants and keeps everyone moving. In development. | pendium.co/lofty-ambitions/ |
 
 ## Brand & Tone
-- Confident and opinionated — we have strong views on AI product design
-- Direct, no agency-speak ("we partner with brands to unlock potential" = never)
-- Intellectually serious without being academic
-- Agency framing — never reveal or hint at team size
-- Dry wit welcome; overt humor not
+
+- Plain and direct. State what a product does and who it is for.
+- Confident without hype.
+- Dry wit is welcome. Overt jokes are not.
+- Never reveal or hint at team size.
+
+## Visual System
+
+- The homepage uses Pendium's own look: dark neutral background, Outfit and IBM Plex Mono, and the ASCII pendulum.
+- Each product card shows its product's own palette on hover, and at all times on touch screens. The cards set the palette through `--card-*` custom properties in `index.html`.
+- A product's own page uses that product's look, not Pendium's. The Lofty Ambitions page uses the game's palette and Pixelify Sans.
 
 ## Anti-references
-- General AI hype ("revolutionary", "transform", "cutting-edge")
-- Generic agency positioning ("full-service", "end-to-end solutions")
-- Solo practitioner signals (founder-forward, "I" language)
-- Stock-photo corporate warmth
-- Feature-list vendor marketing
 
-## Services
-1. **Design Research** — Qualitative interviews, behavioral synthesis, diary studies, usability sessions. The research that reveals how users actually think about and trust AI in your product.
-2. **Product Design** — UX and UI design for AI-infused products. Interaction patterns for AI features: confidence signals, progressive disclosure, graceful error states, human override flows.
-3. **AI Product Strategy** — Which AI capabilities to surface, when, and how — grounded in research into user readiness and trust. Strategy before design.
-4. **Frontend Engineering** — Production-quality implementation. Component libraries, design systems, code that preserves design intent through to shipping.
+- AI hype: "revolutionary", "transform", "cutting-edge".
+- Generic agency language: "full-service", "end-to-end solutions", "we partner with brands".
+- Founder-forward or "I" language.
+- One visual style forced onto every product.
+- Feature-list vendor marketing.
 
-## Engagement Models
-- Research Sprint: $8–20K, 2 weeks, fixed
-- Design Engagement: $30–120K, 6–16 weeks, scoped
-- Build Engagement: $20–80K, 4–12 weeks, scoped
-- Embedded Partnership: $12–30K/mo, 3 month minimum
+## Lofty Ambitions page rules
 
-## Strategic Principles
-- Research before assumptions — always
-- The people who scope the work are the people who do it (no handoff degradation)
-- Senior delivery across every engagement
-- Human judgment is the differentiator from what AI can do
-- Users decide if AI is trustworthy, not product teams
-
-## Core Positioning
-AI can generate interfaces at scale. It can't tell you if they're right. The research, judgment, and craft needed to make AI features earn user trust requires human understanding — that's what Pendium does.
+- No release date, price, platform or review claims until they are confirmed.
+- Never name the source repo ("yoot-tower") or other tower games.
+- The main call to action is the launch email sign-up (Buttondown).
