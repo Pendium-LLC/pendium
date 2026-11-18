@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lofty Ambitions — build a whole city in one tower</title>
+  <meta name="description"
+    content="Lofty Ambitions is a pixel-art tower game. Add floors, rooms and elevators, fill them with homes, offices, ramen bars and arcades, and keep everyone moving." />
+  <link rel="canonical" href="https://pendium.co/lofty-ambitions/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pendium.co/lofty-ambitions/" />
+  <meta property="og:title" content="Lofty Ambitions — a whole city in one tower" />
+  <meta property="og:description"
+    content="A pixel-art tower game. Add floors, rooms and elevators, and keep everyone moving." />
+  <meta property="og:image" content="https://pendium.co/lofty-ambitions/assets/og.jpg" />
+  <meta property="og:image:width" content="1232" />
+  <meta property="og:image:height" content="706" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" href="assets/icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* Colours from the game's own interface (Sources/TowerInterface/Palette.swift)
+       and the trailer's night sky and coral headline colour. */
+    :root {
+      color-scheme: dark;
+      --night: #141b38;
+      --night-hi: #1f2a52;
+      --night-lo: #0d1228;
+      --ink: #2b2433;
+      --parchment: #f3e8cf;
+      --panel: #e9dcc0;
+      --row: #fcf6e6;
+      --muted: #6e6259;
+      --gold: #e0b35a;
+      --gold-hi: #f0c977;
+      --coral: #ec6a54;
+      --teal: #1e7a8c;
+      --sky-text: #c9cff0;
+      --pixel: "Pixelify Sans", ui-monospace, monospace;
+      --sans: "Nunito", system-ui, sans-serif;
+      --frame: 3px solid var(--ink);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--night);
+      color: var(--parchment);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    img,
+    video {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: var(--pixel);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+      margin: 0;
+    }
+
+    .eyebrow {
+      font-family: var(--pixel);
+      font-weight: 500;
+      font-size: 15px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin: 0 0 14px;
+    }
+
+    /* A framed box in the style of the game's panels:
+       square corners, a dark outline and a hard shadow. */
+    .framed {
+      border: var(--frame);
+      box-shadow: 6px 6px 0 var(--night-lo);
+      background: var(--ink);
+    }
+
+    /* ---------- header ---------- */
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--pixel);
+      font-weight: 700;
+      font-size: 20px;
+      text-decoration: none;
+    }
+
+    .brand img {
+      width: 36px;
+      height: 36px;
+      image-rendering: pixelated;
+    }
+
+    .studio-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sky-text);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .studio-link:hover {
+      color: var(--parchment);
+      text-decoration: underline;
+    }
+
+    /* ---------- hero ---------- */
+
+    .hero {
+      background:
+        radial-gradient(90vmax 60vmax at 80% 0%, var(--night-hi) 0%, var(--night) 55%, var(--night-lo) 100%);
+      padding-bottom: 88px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: 56px;
+      align-items: center;
+      padding-top: 40px;
+    }
+
+    .hero h1 {
+      font-size: clamp(40px, 6vw, 68px);
+      margin-bottom: 22px;
+    }
+
+    .hero h1 .hot {
+      color: var(--coral);
+      display: block;
+    }
+
+    .lede {
+      color: var(--sky-text);
+      font-size: 19px;
+      max-width: 38ch;
+      margin: 0 0 30px;
+    }
+
+    .cover {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1232 / 706;
+      object-fit: cover;
+    }
+
+    /* ---------- sign-up form ---------- */
+
+    .signup label {
+      display: block;
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .signup-row {
+      display: flex;
+      gap: 10px;
+      max-width: 460px;
+    }
+
+    .signup input[type="email"] {
+      flex: 1;
+      min-width: 0;
+      font: inherit;
+      font-size: 16px;
+      color: var(--ink);
+      background: var(--row);
+      border: var(--frame);
+      border-radius: 0;
+      padding: 12px 14px;
+    }
+
+    .signup input[type="email"]::placeholder {
+      color: var(--muted);
+    }
+
+    .btn {
+      font-family: var(--pixel);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink);
+      background: var(--gold);
+      border: var(--frame);
+      border-radius: 0;
+      padding: 10px 20px;
+      box-shadow: 4px 4px 0 var(--ink);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+    }
+
+    .btn:hover {
+      background: var(--gold-hi);
+    }
+
+    .btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .signup .fine {
+      font-size: 14px;
+      color: var(--sky-text);
+      margin: 10px 0 0;
+    }
+
+    /* ---------- trailer ---------- */
+
+    .trailer {
+      background: var(--night-lo);
+      padding: 88px 0;
+    }
+
+    .section-head {
+      margin-bottom: 30px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(30px, 4vw, 42px);
+    }
+
+    .trailer video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--ink);
+    }
+
+    .caption {
+      font-size: 14px;
+      color: var(--sky-text);
+      margin: 14px 0 0;
+    }
+
+    /* ---------- features (parchment band, like the game's panels) ---------- */
+
+    .features {
+      background: var(--parchment);
+      color: var(--ink);
+      padding: 88px 0;
+      border-top: var(--frame);
+      border-bottom: var(--frame);
+    }
+
+    .features .eyebrow {
+      color: var(--teal);
+    }
+
+    .feature-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    .feature {
+      background: var(--row);
+      border: var(--frame);
+      box-shadow: 6px 6px 0 var(--ink);
+    }
+
+    .feature video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: var(--ink);
+      border-bottom: var(--frame);
+    }
+
+    .feature-body {
+      padding: 20px 22px 24px;
+    }
+
+    .feature h3 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: #4a4048;
+    }
+
+    /* ---------- screenshots ---------- */
+
+    .shots {
+      padding: 88px 0;
+    }
+
+    .shot-grid {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .shot-grid li:first-child {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .shot-grid a {
+      display: block;
+      height: 100%;
+      text-decoration: none;
+    }
+
+    .shot-grid img {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      transition: transform 160ms ease;
+    }
+
+    .shot-grid a:hover img {
+      transform: scale(1.02);
+    }
+
+    .viewer {
+      border: var(--frame);
+      padding: 0;
+      background: var(--ink);
+      max-width: min(1280px, 94vw);
+      width: 100%;
+    }
+
+    .viewer::backdrop {
+      background: rgba(13, 18, 40, 0.88);
+    }
+
+    .viewer img {
+      width: 100%;
+    }
+
+    .viewer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 14px;
+      color: var(--parchment);
+      font-family: var(--pixel);
+      font-size: 17px;
+    }
+
+    .viewer-bar .btn {
+      font-size: 15px;
+      padding: 6px 14px;
+      box-shadow: none;
+    }
+
+    /* ---------- closing sign-up ---------- */
+
+    .closing {
+      padding: 0 0 96px;
+    }
+
+    .closing-box {
+      background: var(--panel);
+      color: var(--ink);
+      border: var(--frame);
+      box-shadow: 8px 8px 0 var(--night-lo);
+      padding: 44px 48px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 40px;
+      align-items: center;
+    }
+
+    .closing-box h2 {
+      font-size: clamp(28px, 3.6vw, 38px);
+      margin-bottom: 10px;
+    }
+
+    .closing-box p {
+      margin: 0;
+      color: #4a4048;
+    }
+
+    .closing-box .signup .fine {
+      color: var(--muted);
+    }
+
+    /* ---------- footer ---------- */
+
+    .site-footer {
+      border-top: 1px solid rgba(201, 207, 240, 0.18);
+      padding: 26px 0 40px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 28px;
+      justify-content: space-between;
+      font-size: 14px;
+      color: var(--sky-text);
+    }
+
+    .site-footer a {
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      color: var(--parchment);
+      text-decoration: underline;
+    }
+
+    /* ---------- small screens ---------- */
+
+    @media (max-width: 880px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        padding-top: 16px;
+      }
+
+      .hero-art {
+        order: -1;
+      }
+
+      .feature-list {
+        grid-template-columns: 1fr;
+        max-width: 560px;
+      }
+
+      .shot-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .shot-grid li:first-child {
+        grid-row: auto;
+      }
+
+      .closing-box {
+        grid-template-columns: 1fr;
+        padding: 32px 26px;
+        gap: 26px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      body {
+        font-size: 16px;
+      }
+
+      .wrap {
+        padding: 0 16px;
+      }
+
+      .brand {
+        font-size: 17px;
+      }
+
+      .brand img {
+        width: 30px;
+        height: 30px;
+      }
+
+      .signup-row {
+        flex-direction: column;
+      }
+
+      .hero,
+      .trailer,
+      .features,
+      .shots {
+        padding-bottom: 64px;
+      }
+
+      .trailer,
+      .features,
+      .shots {
+        padding-top: 64px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .btn,
+      .shot-grid img {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <nav class="site-header" aria-label="Site">
+        <a class="brand" href="./">
+          <img src="assets/icon.png" alt="" width="36" height="36" />
+          Lofty Ambitions
+        </a>
+        <a class="studio-link" href="/">A Pendium game</a>
+      </nav>
+
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">A pixel-art tower game</p>
+          <h1>A whole city. <span class="hot">One tower.</span></h1>
+          <p class="lede">
+            Start with a lobby and $180,000. Add floors, rooms and elevators.
+            Fill the tower with homes, offices, ramen bars and arcades, then
+            keep everyone moving.
+          </p>
+
+          <!-- Buttondown username: replace "pendium" in the action URL below
+               if the Buttondown account uses a different name. -->
+          <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium"
+            method="post">
+            <label for="email-top">Get an email when the game launches</label>
+            <div class="signup-row">
+              <input id="email-top" type="email" name="email" placeholder="you@example.com"
+                autocomplete="email" required />
+              <input type="hidden" name="tag" value="lofty-ambitions" />
+              <button class="btn" type="submit">Notify me</button>
+            </div>
+            <p class="fine">One launch email. Unsubscribe any time.</p>
+          </form>
+        </div>
+
+        <div class="hero-art">
+          <img class="cover framed" src="assets/cover.webp" width="1232" height="706"
+            alt="Lofty Ambitions cover art: a busy pixel-art tower at dusk, with a city skyline, cherry trees and a train behind it." />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="trailer" aria-labelledby="trailer-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Trailer</p>
+          <h2 id="trailer-title">See the tower come alive</h2>
+        </div>
+        <video class="framed" controls preload="none" playsinline poster="assets/trailer-poster.webp"
+          width="1280" height="720">
+          <source src="assets/trailer.mp4" type="video/mp4" />
+          <a href="assets/trailer.mp4">Download the trailer (MP4, 7 MB)</a>
+        </video>
+        <p class="caption">32 seconds of in-game footage. Construction and time are sped up.</p>
+      </div>
+    </section>
+
+    <section class="features" aria-labelledby="features-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">What you do</p>
+          <h2 id="features-title">Build up. Fill it. Keep it running.</h2>
+        </div>
+        <ul class="feature-list">
+          <li class="feature">
+            <video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true"
+              width="600" height="338">
+              <source src="assets/loop-build.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-body">
+              <h3>Build it up</h3>
+              <p>
+                Draw floors, place rooms in rows and stretch elevator shafts. Go up to
+                100 floors above the lobby, and dig down for venues underground.
+              </p>
+            </div>
+          </li>
+          <li class="feature">
+            <video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true"
+              width="480" height="270">
+              <source src="assets/loop-lives.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-body">
+              <h3>Little lives</h3>
+              <p>
+                Tenants move in, go to work, eat out and come home. Every room has its
+                own routine, from the boba counter to the karate class.
+              </p>
+            </div>
+          </li>
+          <li class="feature">
+            <video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true"
+              width="600" height="338">
+              <source src="assets/loop-chaos.mp4" type="video/mp4" />
+            </video>
+            <div class="feature-body">
+              <h3>Pleasant chaos</h3>
+              <p>
+                Elevator queues grow and hotels need housekeeping. When a fire starts,
+                the fire crew arrives with ladders and hoses.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="shots" aria-labelledby="shots-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Screenshots</p>
+          <h2 id="shots-title">Floor by floor</h2>
+        </div>
+        <ul class="shot-grid">
+          <li><a href="assets/shot-01.webp" data-caption="A whole city in one tower"><img
+                class="framed" src="assets/shot-01.webp" width="1920" height="1080" loading="lazy"
+                alt="A tall tower cross-section with dozens of furnished rooms and elevator shafts." /></a></li>
+          <li><a href="assets/shot-03.webp" data-caption="Homes, work, ramen and play"><img class="framed"
+                src="assets/shot-03.webp" width="1920" height="1080" loading="lazy"
+                alt="Close-up of apartments, offices and a ramen bar with tenants inside." /></a></li>
+          <li><a href="assets/shot-06.webp" data-caption="The fire crew at work"><img class="framed"
+                src="assets/shot-06.webp" width="1920" height="1080" loading="lazy"
+                alt="A fire engine and firefighters spraying water on a burning floor." /></a></li>
+          <li><a href="assets/shot-07.webp" data-caption="A tower against the skyline"><img class="framed"
+                src="assets/shot-07.webp" width="1920" height="1080" loading="lazy"
+                alt="A tall tower rising above a city skyline." /></a></li>
+          <li><a href="assets/shot-08.webp" data-caption="The building tools"><img class="framed"
+                src="assets/shot-08.webp" width="1920" height="1080" loading="lazy"
+                alt="The game interface, with the room list on the left and the tower on the right." /></a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-title">
+      <div class="wrap">
+        <div class="closing-box">
+          <div>
+            <h2 id="closing-title">Save a spot in the lobby</h2>
+            <p>Lofty Ambitions is in development. Leave your email and we will tell you when it launches.</p>
+          </div>
+          <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium"
+            method="post">
+            <label for="email-bottom">Email address</label>
+            <div class="signup-row">
+              <input id="email-bottom" type="email" name="email" placeholder="you@example.com"
+                autocomplete="email" required />
+              <input type="hidden" name="tag" value="lofty-ambitions" />
+              <button class="btn" type="submit">Notify me</button>
+            </div>
+            <p class="fine">One launch email. Unsubscribe any time.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="wrap">
+    <footer class="site-footer">
+      <span>© 2026 Pendium</span>
+      <span>Lofty Ambitions is made by <a href="/">Pendium</a>.</span>
+    </footer>
+  </div>
+
+  <dialog class="viewer" id="viewer" aria-label="Screenshot">
+    <div class="viewer-bar">
+      <span id="viewer-caption"></span>
+      <form method="dialog"><button class="btn" type="submit">Close</button></form>
+    </div>
+    <img id="viewer-img" src="" alt="" />
+  </dialog>
+
+  <script>
+    (function () {
+      // Reduced motion: stop the looping clips on their first frame.
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.querySelectorAll("video.loop").forEach((v) => {
+          v.removeAttribute("autoplay");
+          v.pause();
+          v.currentTime = 0;
+        });
+      }
+
+      // Screenshot viewer. Without JS, each link opens the full image.
+      const viewer = document.getElementById("viewer");
+      if (!viewer || typeof viewer.showModal !== "function") return;
+      const img = document.getElementById("viewer-img");
+      const caption = document.getElementById("viewer-caption");
+
+      document.querySelectorAll(".shot-grid a").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          const thumb = link.querySelector("img");
+          img.src = link.href;
+          img.alt = thumb.alt;
+          caption.textContent = link.dataset.caption || "";
+          viewer.showModal();
+        });
+      });
+
+      // Click on the backdrop closes the viewer.
+      viewer.addEventListener("click", (event) => {
+        if (event.target === viewer) viewer.close();
+      });
+    })();
+  </script>
+</body>
+
+</html>
