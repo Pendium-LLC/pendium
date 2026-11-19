@@ -21,37 +21,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Pixelify+Sans:wght@500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Pixelify+Sans:wght@500;700&display=swap"
     rel="stylesheet" />
   <style>
-    /* Colours from the game's own interface (Sources/TowerInterface/Palette.swift)
-       and the trailer's night sky and coral headline colour. */
+    /* Colours come from the game: its interface palette
+       (Sources/TowerInterface/Palette.swift), the night city art and the rooms. */
     :root {
       color-scheme: dark;
-      --night: #141b38;
-      --night-hi: #1f2a52;
-      --night-lo: #0d1228;
+      --night: #0f1733;
       --ink: #2b2433;
       --parchment: #f3e8cf;
-      --panel: #e9dcc0;
-      --row: #fcf6e6;
-      --muted: #6e6259;
+      --marble: #efe6d2;
       --gold: #e0b35a;
-      --gold-hi: #f0c977;
+      --gold-hi: #f4cd78;
       --coral: #ec6a54;
-      --teal: #1e7a8c;
-      --sky-text: #c9cff0;
+      --concrete: #4b5068;
+      --concrete-lo: #2f3347;
       --pixel: "Pixelify Sans", ui-monospace, monospace;
       --sans: "Nunito", system-ui, sans-serif;
-      --frame: 3px solid var(--ink);
+      --scale: 2;
+      /* room art is 88 px tall in the sheets */
+      --room-h: calc(88px * var(--scale));
+      --tower-w: min(1120px, 100vw - 32px);
     }
 
     * {
       box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
     }
 
     body {
@@ -59,9 +54,10 @@
       background: var(--night);
       color: var(--parchment);
       font-family: var(--sans);
-      font-size: 17px;
+      font-size: 18px;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     a {
@@ -80,48 +76,93 @@
       height: auto;
     }
 
-    .wrap {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 0 24px;
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
 
-    h1,
-    h2,
-    h3 {
+    /* ---------- the city behind the tower ---------- */
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(180deg, rgba(15, 23, 51, 0) 40%, rgba(15, 23, 51, 0.55) 100%),
+        url("assets/city-night.webp") center bottom / cover no-repeat,
+        var(--night);
+      image-rendering: pixelated;
+    }
+
+    /* ---------- buttons ---------- */
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       font-family: var(--pixel);
       font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: 0.01em;
-      margin: 0;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--ink);
+      background: var(--gold);
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      padding: 14px 22px;
+      box-shadow: 5px 5px 0 var(--ink);
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: transform 70ms ease, box-shadow 70ms ease, background 120ms ease;
     }
 
-    .eyebrow {
-      font-family: var(--pixel);
-      font-weight: 500;
-      font-size: 15px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin: 0 0 14px;
+    .btn:hover {
+      background: var(--gold-hi);
     }
 
-    /* A framed box in the style of the game's panels:
-       square corners, a dark outline and a hard shadow. */
-    .framed {
-      border: var(--frame);
-      box-shadow: 6px 6px 0 var(--night-lo);
-      background: var(--ink);
+    .btn:active {
+      transform: translate(4px, 4px);
+      box-shadow: 1px 1px 0 var(--ink);
     }
 
-    /* ---------- header ---------- */
+    .btn--quiet {
+      background: var(--parchment);
+    }
 
-    .site-header {
+    .btn--quiet:hover {
+      background: #fff6e0;
+    }
+
+    .btn svg {
+      width: 20px;
+      height: 20px;
+      shape-rendering: crispEdges;
+    }
+
+    /* ---------- roof (hero) ---------- */
+
+    .roof {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      padding: 0 16px;
+      background:
+        linear-gradient(90deg, rgba(9, 13, 32, 0.86) 0%, rgba(9, 13, 32, 0.6) 42%, rgba(9, 13, 32, 0) 78%),
+        linear-gradient(180deg, rgba(9, 13, 32, 0) 60%, rgba(9, 13, 32, 0.7) 100%);
+    }
+
+    .roof-nav {
+      width: var(--tower-w);
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 20px 0;
+      padding: 22px 0;
     }
 
     .brand {
@@ -138,213 +179,329 @@
       width: 36px;
       height: 36px;
       image-rendering: pixelated;
+      border: 2px solid var(--ink);
     }
 
     .studio-link {
-      font-size: 14px;
       font-weight: 600;
-      color: var(--sky-text);
+      font-size: 15px;
       text-decoration: none;
-      white-space: nowrap;
+      opacity: 0.85;
     }
 
     .studio-link:hover {
-      color: var(--parchment);
+      opacity: 1;
       text-decoration: underline;
     }
 
-    /* ---------- hero ---------- */
-
-    .hero {
-      background:
-        radial-gradient(90vmax 60vmax at 80% 0%, var(--night-hi) 0%, var(--night) 55%, var(--night-lo) 100%);
-      padding-bottom: 88px;
+    .roof-body {
+      width: var(--tower-w);
+      margin: auto auto 0;
+      padding: 6vh 0 0;
     }
 
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-      gap: 56px;
-      align-items: center;
-      padding-top: 40px;
-    }
-
-    .hero h1 {
-      font-size: clamp(40px, 6vw, 68px);
-      margin-bottom: 22px;
-    }
-
-    .hero h1 .hot {
-      color: var(--coral);
-      display: block;
-    }
-
-    .lede {
-      color: var(--sky-text);
-      font-size: 19px;
-      max-width: 38ch;
-      margin: 0 0 30px;
-    }
-
-    .cover {
-      display: block;
-      width: 100%;
-      aspect-ratio: 1232 / 706;
-      object-fit: cover;
-    }
-
-    /* ---------- sign-up form ---------- */
-
-    .signup label {
-      display: block;
-      font-weight: 700;
-      font-size: 15px;
-      margin-bottom: 8px;
-    }
-
-    .signup-row {
-      display: flex;
-      gap: 10px;
-      max-width: 460px;
-    }
-
-    .signup input[type="email"] {
-      flex: 1;
-      min-width: 0;
-      font: inherit;
-      font-size: 16px;
-      color: var(--ink);
-      background: var(--row);
-      border: var(--frame);
-      border-radius: 0;
-      padding: 12px 14px;
-    }
-
-    .signup input[type="email"]::placeholder {
-      color: var(--muted);
-    }
-
-    .btn {
+    .title {
       font-family: var(--pixel);
       font-weight: 700;
-      font-size: 18px;
-      color: var(--ink);
-      background: var(--gold);
-      border: var(--frame);
-      border-radius: 0;
-      padding: 10px 20px;
-      box-shadow: 4px 4px 0 var(--ink);
-      cursor: pointer;
+      font-size: clamp(64px, 13vw, 196px);
+      line-height: 0.86;
+      letter-spacing: -0.01em;
+      margin: 0 0 28px;
+      color: var(--parchment);
+      text-shadow: 0.035em 0.035em 0 var(--coral), 0.07em 0.07em 0 var(--ink);
+    }
+
+    .title .word {
+      display: block;
       white-space: nowrap;
-      transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
     }
 
-    .btn:hover {
-      background: var(--gold-hi);
+    .title .word + .word {
+      padding-left: 0.32em;
     }
 
-    .btn:active {
-      transform: translate(3px, 3px);
-      box-shadow: 1px 1px 0 var(--ink);
+    .title .ch {
+      display: inline-block;
     }
 
-    .signup .fine {
-      font-size: 14px;
-      color: var(--sky-text);
-      margin: 10px 0 0;
+    .tagline {
+      font-size: clamp(20px, 2.2vw, 26px);
+      font-weight: 600;
+      max-width: 30ch;
+      margin: 0 0 28px;
+      text-shadow: 0 2px 0 var(--ink);
     }
 
-    /* ---------- trailer ---------- */
-
-    .trailer {
-      background: var(--night-lo);
-      padding: 88px 0;
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
     }
 
-    .section-head {
-      margin-bottom: 30px;
+    .hint {
+      font-family: var(--pixel);
+      font-size: 16px;
+      margin: 26px 0 0;
+      opacity: 0.85;
     }
 
-    .section-head h2 {
-      font-size: clamp(30px, 4vw, 42px);
+    /* The roof edge: where the tower starts. */
+    .parapet {
+      width: var(--tower-w);
+      height: 34px;
+      margin: 8vh auto 0;
+      background:
+        repeating-linear-gradient(90deg, var(--concrete) 0 46px, var(--concrete-lo) 46px 48px);
+      border: 3px solid var(--ink);
+      border-bottom: 0;
+      box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.12);
     }
 
-    .trailer video {
-      width: 100%;
-      aspect-ratio: 16 / 9;
+    /* ---------- the tower ---------- */
+
+    .tower {
+      width: var(--tower-w);
+      margin: 0 auto;
+      border-left: 10px solid var(--concrete);
+      border-right: 10px solid var(--concrete);
+      outline: 3px solid var(--ink);
       background: var(--ink);
     }
 
-    .caption {
-      font-size: 14px;
-      color: var(--sky-text);
-      margin: 14px 0 0;
+    .floor {
+      --wall: #1d2440;
+      position: relative;
+      background: var(--wall);
+      overflow: hidden;
     }
 
-    /* ---------- features (parchment band, like the game's panels) ---------- */
+    .slab {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 46px;
+      padding: 6px 16px;
+      background: var(--concrete);
+      border-top: 3px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+      box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.12);
+      font-size: 15px;
+      font-weight: 600;
+    }
 
-    .features {
-      background: var(--parchment);
+    .plate {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .plate b {
+      font-family: var(--pixel);
+      font-weight: 700;
+      font-size: 20px;
       color: var(--ink);
-      padding: 88px 0;
-      border-top: var(--frame);
-      border-bottom: var(--frame);
+      background: var(--gold);
+      border: 2px solid var(--ink);
+      padding: 1px 9px;
     }
 
-    .features .eyebrow {
-      color: var(--teal);
+    .now-playing {
+      font-family: var(--pixel);
+      font-weight: 500;
+      color: var(--gold-hi);
+      opacity: 0;
+      transition: opacity 400ms ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .feature-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
+    .sound-on .floor.is-current .now-playing {
+      opacity: 1;
+    }
+
+    /* The room: the game's own art, see-through windows onto the city. */
+    .room-window {
+      position: relative;
+      height: var(--room-h);
+      overflow: hidden;
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .room-strip {
+      --rows: 3;
+      --state: 2;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+    }
+
+    .room-art {
+      position: absolute;
+      inset: 0;
+      background-image: var(--sprite);
+      background-repeat: no-repeat;
+      background-size: 100% calc(100% * var(--rows));
+      background-position: 0 calc(100% * var(--state) / (var(--rows) - 1));
+      image-rendering: pixelated;
+    }
+
+    /* Without JS the room fits the floor. With JS it shows at 2x and pans. */
+    .js .room-strip {
+      width: calc(960px * var(--scale));
+    }
+
+    .js .lobby .room-strip {
+      width: calc(1024px * var(--scale));
+    }
+
+    .lobby .room-window {
+      height: calc(96px * var(--scale));
+    }
+
+    .lobby .room-art {
+      background-size: 100% 100%;
+      background-position: 0 0;
+    }
+
+    .walker {
+      position: absolute;
+      bottom: calc(3px * var(--scale));
+      left: -60px;
+      width: calc(28px * var(--scale));
+      height: calc(46px * var(--scale));
+      background-image: var(--src);
+      background-size: 400% 100%;
+      image-rendering: pixelated;
+      opacity: 0;
+      transition: opacity 300ms ease;
+      animation:
+        walk-frames 0.6s steps(4) infinite,
+        walk-across var(--dur, 16s) linear infinite;
+      animation-delay: 0s, var(--delay, 0s);
+      animation-play-state: paused;
+    }
+
+    .walker.is-left {
+      transform: scaleX(-1);
+      animation-direction: normal, reverse;
+    }
+
+    .floor.is-open .walker {
+      opacity: 1;
+    }
+
+    .floor.is-near .walker {
+      animation-play-state: running;
+    }
+
+    @keyframes walk-frames {
+      to {
+        background-position: 133.333% 0;
+      }
+    }
+
+    @keyframes walk-across {
+      from {
+        left: -60px;
+      }
+
+      to {
+        left: 100%;
+      }
+    }
+
+    /* The chaos floor: the fire light while the rooms show damage. */
+    .fire-glow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(60% 90% at 40% 100%, rgba(236, 106, 84, 0.55), transparent 70%);
+      opacity: 0;
+      mix-blend-mode: screen;
+    }
+
+    .floor.is-burning .fire-glow {
+      opacity: 1;
+      animation: flicker 0.45s steps(2) infinite;
+    }
+
+    @keyframes flicker {
+      50% {
+        opacity: 0.55;
+      }
+    }
+
+    /* ---------- floor content ---------- */
+
+    .floor-body {
+      padding: 40px 0 72px;
+    }
+
+    .kinetic {
+      font-family: var(--pixel);
+      font-weight: 700;
+      font-size: clamp(64px, 12.5vw, 176px);
+      line-height: 0.95;
+      white-space: nowrap;
+      margin: 0 0 36px;
+      padding-left: 28px;
+      color: var(--parchment);
+      text-shadow: 0.04em 0.04em 0 var(--ink);
+      will-change: transform;
+    }
+
+    .floor-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 28px;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 40px;
+      align-items: center;
+      padding: 0 40px;
     }
 
-    .feature {
-      background: var(--row);
-      border: var(--frame);
-      box-shadow: 6px 6px 0 var(--ink);
+    .floor:nth-of-type(even) .floor-grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     }
 
-    .feature video {
+    .floor:nth-of-type(even) .floor-copy {
+      order: 2;
+    }
+
+    .floor-copy p {
+      margin: 0 0 14px;
+      max-width: 40ch;
+    }
+
+    .floor-copy .small {
+      font-size: 15px;
+      opacity: 0.8;
+    }
+
+    .screen {
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.45);
+      background: var(--ink);
+      margin: 0;
+    }
+
+    .screen video {
       width: 100%;
       aspect-ratio: 16 / 9;
       object-fit: cover;
-      background: var(--ink);
-      border-bottom: var(--frame);
     }
 
-    .feature-body {
-      padding: 20px 22px 24px;
-    }
-
-    .feature h3 {
-      font-size: 24px;
-      margin-bottom: 8px;
-    }
-
-    .feature p {
-      margin: 0;
-      color: #4a4048;
-    }
-
-    /* ---------- screenshots ---------- */
-
-    .shots {
-      padding: 88px 0;
-    }
-
+    /* Screenshots */
     .shot-grid {
       list-style: none;
       margin: 0;
-      padding: 0;
+      padding: 0 40px;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
     }
 
     .shot-grid li:first-child {
@@ -355,7 +512,6 @@
     .shot-grid a {
       display: block;
       height: 100%;
-      text-decoration: none;
     }
 
     .shot-grid img {
@@ -363,23 +519,202 @@
       height: 100%;
       aspect-ratio: 16 / 9;
       object-fit: cover;
-      transition: transform 160ms ease;
+      border: 3px solid var(--ink);
     }
 
-    .shot-grid a:hover img {
-      transform: scale(1.02);
+    .shot-intro {
+      padding: 0 40px;
+      margin: 0 0 22px;
+      max-width: calc(40ch + 80px);
     }
+
+    /* ---------- the lobby: bright marble ---------- */
+
+    .lobby {
+      --wall: var(--marble);
+      color: var(--ink);
+    }
+
+    .lobby .kinetic {
+      font-size: clamp(48px, 8.5vw, 124px);
+      color: var(--ink);
+      text-shadow: 0.04em 0.04em 0 var(--gold);
+    }
+
+    .signup label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .signup-row {
+      display: flex;
+      gap: 12px;
+      max-width: 520px;
+    }
+
+    .signup input[type="email"] {
+      flex: 1;
+      min-width: 0;
+      font: inherit;
+      color: var(--ink);
+      background: #fffaf0;
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      padding: 12px 14px;
+    }
+
+    .signup .fine {
+      font-size: 15px;
+      margin: 10px 0 0;
+      opacity: 0.8;
+    }
+
+    /* ---------- basement / footer ---------- */
+
+    .basement {
+      width: var(--tower-w);
+      margin: 0 auto 0;
+      padding: 22px 26px 60px;
+      background: var(--concrete-lo);
+      border: 3px solid var(--ink);
+      border-top: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px 24px;
+      font-size: 15px;
+    }
+
+    .basement a {
+      text-decoration: none;
+    }
+
+    .basement a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------- the elevator panel ---------- */
+
+    .elevator {
+      position: fixed;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 74px;
+      padding: 10px 8px;
+      background: var(--ink);
+      border: 3px solid #120f18;
+      box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .display {
+      width: 100%;
+      background: #120f18;
+      border: 2px solid #4a3f52;
+      text-align: center;
+      font-family: var(--pixel);
+      font-weight: 700;
+      color: var(--coral);
+      text-shadow: 0 0 8px rgba(236, 106, 84, 0.7);
+      padding: 4px 0 2px;
+      line-height: 1;
+    }
+
+    .display .arrow {
+      display: block;
+      font-size: 14px;
+      height: 14px;
+    }
+
+    .display .num {
+      display: block;
+      font-size: 30px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .floor-buttons {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .floor-buttons a {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #3b3343;
+      border: 2px solid #120f18;
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.15);
+      font-family: var(--pixel);
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      color: var(--parchment);
+    }
+
+    .floor-buttons a[aria-current="true"] {
+      background: var(--gold);
+      color: var(--ink);
+      box-shadow: 0 0 12px rgba(224, 179, 90, 0.7);
+    }
+
+    .sound-btn {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      background: var(--parchment);
+      border: 2px solid #120f18;
+      cursor: pointer;
+      color: var(--ink);
+      padding: 0;
+    }
+
+    .sound-btn[aria-pressed="true"] {
+      background: var(--gold);
+    }
+
+    .sound-btn svg {
+      width: 26px;
+      height: 26px;
+      shape-rendering: crispEdges;
+    }
+
+    .sound-btn .waves {
+      display: none;
+    }
+
+    .sound-btn[aria-pressed="true"] .waves {
+      display: inline;
+    }
+
+    .sound-btn[aria-pressed="true"] .mute {
+      display: none;
+    }
+
+    /* ---------- screenshot viewer ---------- */
 
     .viewer {
-      border: var(--frame);
+      border: 3px solid var(--ink);
       padding: 0;
       background: var(--ink);
+      color: var(--parchment);
       max-width: min(1280px, 94vw);
       width: 100%;
     }
 
     .viewer::backdrop {
-      background: rgba(13, 18, 40, 0.88);
+      background: rgba(13, 18, 40, 0.9);
     }
 
     .viewer img {
@@ -392,87 +727,78 @@
       justify-content: space-between;
       gap: 16px;
       padding: 10px 14px;
-      color: var(--parchment);
       font-family: var(--pixel);
-      font-size: 17px;
+      font-size: 18px;
     }
 
     .viewer-bar .btn {
-      font-size: 15px;
-      padding: 6px 14px;
+      font-size: 16px;
+      padding: 8px 14px;
       box-shadow: none;
     }
 
-    /* ---------- closing sign-up ---------- */
+    /* ---------- page-load: the title drops in like building blocks ---------- */
 
-    .closing {
-      padding: 0 0 96px;
+    .js .title .ch {
+      animation: drop 520ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
+      animation-delay: calc(var(--i) * 45ms + 120ms);
     }
 
-    .closing-box {
-      background: var(--panel);
-      color: var(--ink);
-      border: var(--frame);
-      box-shadow: 8px 8px 0 var(--night-lo);
-      padding: 44px 48px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 40px;
-      align-items: center;
+    @keyframes drop {
+      from {
+        transform: translateY(-120vh);
+      }
     }
 
-    .closing-box h2 {
-      font-size: clamp(28px, 3.6vw, 38px);
-      margin-bottom: 10px;
+    /* ---------- layout breakpoints ---------- */
+
+    @media (min-width: 900px) {
+      :root {
+        --tower-w: min(1120px, 100vw - 220px);
+      }
     }
 
-    .closing-box p {
-      margin: 0;
-      color: #4a4048;
-    }
-
-    .closing-box .signup .fine {
-      color: var(--muted);
-    }
-
-    /* ---------- footer ---------- */
-
-    .site-footer {
-      border-top: 1px solid rgba(201, 207, 240, 0.18);
-      padding: 26px 0 40px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 28px;
-      justify-content: space-between;
-      font-size: 14px;
-      color: var(--sky-text);
-    }
-
-    .site-footer a {
-      text-decoration: none;
-    }
-
-    .site-footer a:hover {
-      color: var(--parchment);
-      text-decoration: underline;
-    }
-
-    /* ---------- small screens ---------- */
-
-    @media (max-width: 880px) {
-      .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 36px;
-        padding-top: 16px;
+    @media (max-width: 899px) {
+      body {
+        padding-bottom: 76px;
       }
 
-      .hero-art {
-        order: -1;
+      .elevator {
+        top: auto;
+        bottom: 12px;
+        right: 12px;
+        transform: none;
+        width: auto;
+        flex-direction: row;
+        padding: 6px;
       }
 
-      .feature-list {
+      .floor-buttons {
+        display: none;
+      }
+
+      .display {
+        width: 58px;
+      }
+
+      .floor-grid,
+      .floor:nth-of-type(even) .floor-grid {
         grid-template-columns: 1fr;
-        max-width: 560px;
+        padding: 0 20px;
+        gap: 26px;
+      }
+
+      .floor:nth-of-type(even) .floor-copy {
+        order: 0;
+      }
+
+      .kinetic {
+        padding-left: 20px;
+      }
+
+      .shot-grid,
+      .shot-intro {
+        padding: 0 20px;
       }
 
       .shot-grid {
@@ -482,57 +808,45 @@
       .shot-grid li:first-child {
         grid-row: auto;
       }
-
-      .closing-box {
-        grid-template-columns: 1fr;
-        padding: 32px 26px;
-        gap: 26px;
-      }
     }
 
     @media (max-width: 520px) {
       body {
-        font-size: 16px;
-      }
-
-      .wrap {
-        padding: 0 16px;
-      }
-
-      .brand {
         font-size: 17px;
       }
 
-      .brand img {
-        width: 30px;
-        height: 30px;
+      .tower {
+        border-left-width: 6px;
+        border-right-width: 6px;
       }
 
       .signup-row {
         flex-direction: column;
       }
 
-      .hero,
-      .trailer,
-      .features,
-      .shots {
-        padding-bottom: 64px;
-      }
-
-      .trailer,
-      .features,
-      .shots {
-        padding-top: 64px;
+      .now-playing {
+        display: none;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
+
+      .js .title .ch,
+      .walker,
+      .floor.is-burning .fire-glow {
+        animation: none;
       }
 
-      .btn,
-      .shot-grid img {
+      .js .room-strip {
+        width: 100%;
+        transform: none !important;
+      }
+
+      .kinetic {
+        transform: none !important;
+      }
+
+      .btn {
         transition: none;
       }
     }
@@ -540,154 +854,235 @@
 </head>
 
 <body>
-  <header class="hero">
-    <div class="wrap">
-      <nav class="site-header" aria-label="Site">
-        <a class="brand" href="./">
-          <img src="assets/icon.png" alt="" width="36" height="36" />
-          Lofty Ambitions
-        </a>
-        <a class="studio-link" href="/">A Pendium game</a>
-      </nav>
+  <div class="sky" aria-hidden="true"></div>
 
-      <div class="hero-grid">
-        <div>
-          <p class="eyebrow">A pixel-art tower game</p>
-          <h1>A whole city. <span class="hot">One tower.</span></h1>
-          <p class="lede">
-            Start with a lobby and $180,000. Add floors, rooms and elevators.
-            Fill the tower with homes, offices, ramen bars and arcades, then
-            keep everyone moving.
-          </p>
+  <header class="roof" id="roof" data-floor="R" data-track="lofty-ambitions" data-track-title="Lofty Ambitions">
+    <nav class="roof-nav" aria-label="Site">
+      <a class="brand" href="./">
+        <img src="assets/icon.png" alt="" width="36" height="36" />
+        Lofty Ambitions
+      </a>
+      <a class="studio-link" href="/">A Pendium game</a>
+    </nav>
 
-          <!-- Buttondown username: replace "pendium" in the action URL below
-               if the Buttondown account uses a different name. -->
-          <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium"
-            method="post">
-            <label for="email-top">Get an email when the game launches</label>
-            <div class="signup-row">
-              <input id="email-top" type="email" name="email" placeholder="you@example.com"
-                autocomplete="email" required />
-              <input type="hidden" name="tag" value="lofty-ambitions" />
-              <button class="btn" type="submit">Notify me</button>
-            </div>
-            <p class="fine">One launch email. Unsubscribe any time.</p>
-          </form>
-        </div>
-
-        <div class="hero-art">
-          <img class="cover framed" src="assets/cover.webp" width="1232" height="706"
-            alt="Lofty Ambitions cover art: a busy pixel-art tower at dusk, with a city skyline, cherry trees and a train behind it." />
-        </div>
+    <div class="roof-body">
+      <h1 class="title" aria-label="Lofty Ambitions">
+        <span class="word" data-kinetic-word="-1">Lofty</span>
+        <span class="word" data-kinetic-word="1">Ambitions</span>
+      </h1>
+      <p class="tagline">A whole city in one tower. Build it floor by floor, then keep everyone moving.</p>
+      <div class="actions">
+        <button class="btn" type="button" data-sound-toggle aria-pressed="false">
+          <svg viewBox="0 0 10 10" aria-hidden="true"><path fill="currentColor"
+              d="M1 3h2l2-2h1v8H5L3 7H1z" /><path class="waves" fill="currentColor" d="M7 3h1v4H7zM9 2h1v6H9z" /></svg>
+          <span data-sound-label>Turn on the music</span>
+        </button>
+        <a class="btn btn--quiet" href="#lobby">Notify me at launch</a>
       </div>
+      <p class="hint">Scroll down to ride the elevator to the lobby.</p>
     </div>
+    <div class="parapet" aria-hidden="true"></div>
   </header>
 
-  <main>
-    <section class="trailer" aria-labelledby="trailer-title">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow">Trailer</p>
-          <h2 id="trailer-title">See the tower come alive</h2>
-        </div>
-        <video class="framed" controls preload="none" playsinline poster="assets/trailer-poster.webp"
-          width="1280" height="720">
-          <source src="assets/trailer.mp4" type="video/mp4" />
-          <a href="assets/trailer.mp4">Download the trailer (MP4, 7 MB)</a>
-        </video>
-        <p class="caption">32 seconds of in-game footage. Construction and time are sped up.</p>
+  <main class="tower">
+    <!-- 88F -->
+    <section class="floor" id="f88" data-floor="88" data-track="ninety-floors-up"
+      data-track-title="Ninety Floors Up" aria-labelledby="f88-title" style="--wall:#11303a">
+      <div class="slab">
+        <span class="plate"><b>88F</b> Observatory and flower shop</span>
+        <span class="now-playing">♪ Ninety Floors Up</span>
       </div>
-    </section>
-
-    <section class="features" aria-labelledby="features-title">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow">What you do</p>
-          <h2 id="features-title">Build up. Fill it. Keep it running.</h2>
+      <div class="room-window" aria-hidden="true">
+        <div class="room-strip" style="--sprite:url(assets/sprites/f88.png)">
+          <div class="room-art"></div>
+          <span class="walker" style="--src:url(assets/sprites/walk-civilian1.png);--dur:19s;--delay:-4s"></span>
+          <span class="walker is-left" style="--src:url(assets/sprites/walk-civilian3.png);--dur:23s;--delay:-12s"></span>
         </div>
-        <ul class="feature-list">
-          <li class="feature">
+      </div>
+      <div class="floor-body">
+        <h2 class="kinetic" id="f88-title" data-dir="-1">Build it up</h2>
+        <div class="floor-grid">
+          <div class="floor-copy">
+            <p>Start with a lobby and $180,000. Draw floors, place rooms in rows and stretch the elevator
+              shafts.</p>
+            <p>Build up to 100 floors above the lobby, then dig down for venues underground.</p>
+          </div>
+          <figure class="screen">
             <video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true"
               width="600" height="338">
               <source src="assets/loop-build.mp4" type="video/mp4" />
             </video>
-            <div class="feature-body">
-              <h3>Build it up</h3>
-              <p>
-                Draw floors, place rooms in rows and stretch elevator shafts. Go up to
-                100 floors above the lobby, and dig down for venues underground.
-              </p>
-            </div>
-          </li>
-          <li class="feature">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 64F -->
+    <section class="floor" id="f64" data-floor="64" data-track="token-rush" data-track-title="Token Rush"
+      aria-labelledby="f64-title" style="--wall:#22163d">
+      <div class="slab">
+        <span class="plate"><b>64F</b> Arcade and disco</span>
+        <span class="now-playing">♪ Token Rush</span>
+      </div>
+      <div class="room-window" aria-hidden="true">
+        <div class="room-strip" style="--sprite:url(assets/sprites/f64.png)">
+          <div class="room-art"></div>
+          <span class="walker" style="--src:url(assets/sprites/walk-civilian0.png);--dur:17s;--delay:-2s"></span>
+          <span class="walker is-left" style="--src:url(assets/sprites/walk-civilian2.png);--dur:21s;--delay:-9s"></span>
+          <span class="walker" style="--src:url(assets/sprites/walk-civilian3.png);--dur:25s;--delay:-16s"></span>
+        </div>
+      </div>
+      <div class="floor-body">
+        <h2 class="kinetic" id="f64-title" data-dir="1">See it move</h2>
+        <div class="floor-grid">
+          <div class="floor-copy">
+            <p>Every room keeps its own hours and plays its own music. The arcade plays Token Rush. The ramen
+              bar plays something slower.</p>
+            <p class="small">32 seconds of in-game footage. Construction and time are sped up.</p>
+          </div>
+          <figure class="screen">
+            <video id="trailer" controls preload="none" playsinline poster="assets/trailer-poster.webp"
+              width="1280" height="720">
+              <source src="assets/trailer.mp4" type="video/mp4" />
+              <a href="assets/trailer.mp4">Download the trailer (MP4, 7 MB)</a>
+            </video>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 41F -->
+    <section class="floor" id="f41" data-floor="41" data-track="steam-on-the-counter"
+      data-track-title="Steam on the Counter" aria-labelledby="f41-title" style="--wall:#3a1a12">
+      <div class="slab">
+        <span class="plate"><b>41F</b> Ramen bar, boba, bakery and candy store</span>
+        <span class="now-playing">♪ Steam on the Counter</span>
+      </div>
+      <div class="room-window" aria-hidden="true">
+        <div class="room-strip" style="--sprite:url(assets/sprites/f41.png)">
+          <div class="room-art"></div>
+          <span class="walker" style="--src:url(assets/sprites/walk-chef.png);--dur:22s;--delay:-6s"></span>
+          <span class="walker is-left" style="--src:url(assets/sprites/walk-civilian1.png);--dur:18s;--delay:-1s"></span>
+          <span class="walker" style="--src:url(assets/sprites/walk-barista.png);--dur:26s;--delay:-14s"></span>
+        </div>
+      </div>
+      <div class="floor-body">
+        <h2 class="kinetic" id="f41-title" data-dir="-1">Little lives</h2>
+        <div class="floor-grid">
+          <div class="floor-copy">
+            <p>Tenants move in, go to work, eat out and come home. Every room has its own routine, from the
+              boba counter to the karate class.</p>
+            <p>Set the rent. Higher rent earns more per tenant, but fewer people want in.</p>
+          </div>
+          <figure class="screen">
             <video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true"
               width="480" height="270">
               <source src="assets/loop-lives.mp4" type="video/mp4" />
             </video>
-            <div class="feature-body">
-              <h3>Little lives</h3>
-              <p>
-                Tenants move in, go to work, eat out and come home. Every room has its
-                own routine, from the boba counter to the karate class.
-              </p>
-            </div>
-          </li>
-          <li class="feature">
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 23F: the chaos floor -->
+    <section class="floor" id="f23" data-floor="23" data-track="stairwell-samba"
+      data-track-title="Stairwell Samba" data-chaos aria-labelledby="f23-title" style="--wall:#1b2b20">
+      <div class="slab">
+        <span class="plate"><b>23F</b> Restaurant and gym</span>
+        <span class="now-playing">♪ Stairwell Samba</span>
+      </div>
+      <div class="room-window" aria-hidden="true">
+        <div class="room-strip" style="--sprite:url(assets/sprites/f23.png);--rows:4">
+          <div class="room-art"></div>
+          <span class="walker" style="--src:url(assets/sprites/walk-civilian2.png);--dur:16s;--delay:-5s"></span>
+          <span class="walker is-left" style="--src:url(assets/sprites/walk-chef.png);--dur:20s;--delay:-11s"></span>
+          <div class="fire-glow"></div>
+        </div>
+      </div>
+      <div class="floor-body">
+        <h2 class="kinetic" id="f23-title" data-dir="1">Pleasant chaos</h2>
+        <div class="floor-grid">
+          <div class="floor-copy">
+            <p>Elevator queues grow and hotels need housekeeping. When a fire starts, the fire crew arrives
+              with ladders and hoses.</p>
+            <p>Damaged rooms close until you rebuild them. Security and gardens help a big tower stay calm.</p>
+          </div>
+          <figure class="screen">
             <video class="loop" autoplay muted loop playsinline preload="metadata" aria-hidden="true"
               width="600" height="338">
               <source src="assets/loop-chaos.mp4" type="video/mp4" />
             </video>
-            <div class="feature-body">
-              <h3>Pleasant chaos</h3>
-              <p>
-                Elevator queues grow and hotels need housekeeping. When a fire starts,
-                the fire crew arrives with ladders and hoses.
-              </p>
-            </div>
-          </li>
-        </ul>
+          </figure>
+        </div>
       </div>
     </section>
 
-    <section class="shots" aria-labelledby="shots-title">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow">Screenshots</p>
-          <h2 id="shots-title">Floor by floor</h2>
+    <!-- 9F -->
+    <section class="floor" id="f09" data-floor="9" data-track="second-cup-bossa"
+      data-track-title="Second Cup Bossa" aria-labelledby="f09-title" style="--wall:#2b1f15">
+      <div class="slab">
+        <span class="plate"><b>9F</b> Café, bookshop and garden</span>
+        <span class="now-playing">♪ Second Cup Bossa</span>
+      </div>
+      <div class="room-window" aria-hidden="true">
+        <div class="room-strip" style="--sprite:url(assets/sprites/f09.png)">
+          <div class="room-art"></div>
+          <span class="walker" style="--src:url(assets/sprites/walk-barista.png);--dur:20s;--delay:-3s"></span>
+          <span class="walker is-left" style="--src:url(assets/sprites/walk-civilian0.png);--dur:24s;--delay:-15s"></span>
         </div>
+      </div>
+      <div class="floor-body">
+        <h2 class="kinetic" id="f09-title" data-dir="-1">Floor by floor</h2>
+        <p class="shot-intro">Screenshots from the game. Select one to see it full size.</p>
         <ul class="shot-grid">
           <li><a href="assets/shot-01.webp" data-caption="A whole city in one tower"><img
-                class="framed" src="assets/shot-01.webp" width="1920" height="1080" loading="lazy"
+                src="assets/shot-01.webp" width="1920" height="1080" loading="lazy"
                 alt="A tall tower cross-section with dozens of furnished rooms and elevator shafts." /></a></li>
-          <li><a href="assets/shot-03.webp" data-caption="Homes, work, ramen and play"><img class="framed"
+          <li><a href="assets/shot-03.webp" data-caption="Homes, work, ramen and play"><img
                 src="assets/shot-03.webp" width="1920" height="1080" loading="lazy"
                 alt="Close-up of apartments, offices and a ramen bar with tenants inside." /></a></li>
-          <li><a href="assets/shot-06.webp" data-caption="The fire crew at work"><img class="framed"
-                src="assets/shot-06.webp" width="1920" height="1080" loading="lazy"
+          <li><a href="assets/shot-06.webp" data-caption="The fire crew at work"><img src="assets/shot-06.webp"
+                width="1920" height="1080" loading="lazy"
                 alt="A fire engine and firefighters spraying water on a burning floor." /></a></li>
-          <li><a href="assets/shot-07.webp" data-caption="A tower against the skyline"><img class="framed"
+          <li><a href="assets/shot-07.webp" data-caption="A tower against the skyline"><img
                 src="assets/shot-07.webp" width="1920" height="1080" loading="lazy"
                 alt="A tall tower rising above a city skyline." /></a></li>
-          <li><a href="assets/shot-08.webp" data-caption="The building tools"><img class="framed"
-                src="assets/shot-08.webp" width="1920" height="1080" loading="lazy"
+          <li><a href="assets/shot-08.webp" data-caption="The building tools"><img src="assets/shot-08.webp"
+                width="1920" height="1080" loading="lazy"
                 alt="The game interface, with the room list on the left and the tower on the right." /></a></li>
         </ul>
       </div>
     </section>
 
-    <section class="closing" aria-labelledby="closing-title">
-      <div class="wrap">
-        <div class="closing-box">
-          <div>
-            <h2 id="closing-title">Save a spot in the lobby</h2>
+    <!-- Lobby -->
+    <section class="floor lobby" id="lobby" data-floor="1" data-track="going-up" data-track-title="Going Up"
+      aria-labelledby="lobby-title">
+      <div class="slab">
+        <span class="plate"><b>1F</b> Lobby</span>
+        <span class="now-playing">♪ Going Up</span>
+      </div>
+      <div class="room-window" aria-hidden="true">
+        <div class="room-strip" style="--sprite:url(assets/sprites/lobby.png);--rows:1;--state:0">
+          <div class="room-art"></div>
+          <span class="walker" style="--src:url(assets/sprites/walk-civilian3.png);--dur:18s;--delay:-7s"></span>
+          <span class="walker is-left" style="--src:url(assets/sprites/walk-civilian1.png);--dur:22s;--delay:-2s"></span>
+          <span class="walker" style="--src:url(assets/sprites/walk-civilian0.png);--dur:27s;--delay:-19s"></span>
+        </div>
+      </div>
+      <div class="floor-body">
+        <h2 class="kinetic" id="lobby-title" data-dir="1">Doors open soon</h2>
+        <div class="floor-grid">
+          <div class="floor-copy">
             <p>Lofty Ambitions is in development. Leave your email and we will tell you when it launches.</p>
           </div>
-          <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium"
-            method="post">
-            <label for="email-bottom">Email address</label>
+          <!-- Buttondown username: replace "pendium" in the action URL if the
+               Buttondown account uses a different name. -->
+          <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium" method="post"
+            data-signup>
+            <label for="email">Email address</label>
             <div class="signup-row">
-              <input id="email-bottom" type="email" name="email" placeholder="you@example.com"
-                autocomplete="email" required />
+              <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email"
+                required />
               <input type="hidden" name="tag" value="lofty-ambitions" />
               <button class="btn" type="submit">Notify me</button>
             </div>
@@ -698,12 +1093,31 @@
     </section>
   </main>
 
-  <div class="wrap">
-    <footer class="site-footer">
-      <span>© 2026 Pendium</span>
-      <span>Lofty Ambitions is made by <a href="/">Pendium</a>.</span>
-    </footer>
-  </div>
+  <footer class="basement">
+    <span>© 2026 Pendium</span>
+    <span>Lofty Ambitions is made by <a href="/">Pendium</a>.</span>
+  </footer>
+
+  <nav class="elevator" aria-label="Floors">
+    <div class="display" aria-hidden="true">
+      <span class="arrow" data-arrow></span>
+      <span class="num" data-floor-num>R</span>
+    </div>
+    <ul class="floor-buttons">
+      <li><a href="#roof" data-go="roof" aria-label="Roof">R</a></li>
+      <li><a href="#f88" data-go="f88" aria-label="Floor 88">88</a></li>
+      <li><a href="#f64" data-go="f64" aria-label="Floor 64">64</a></li>
+      <li><a href="#f41" data-go="f41" aria-label="Floor 41">41</a></li>
+      <li><a href="#f23" data-go="f23" aria-label="Floor 23">23</a></li>
+      <li><a href="#f09" data-go="f09" aria-label="Floor 9">9</a></li>
+      <li><a href="#lobby" data-go="lobby" aria-label="Lobby">L</a></li>
+    </ul>
+    <button class="sound-btn" type="button" data-sound-toggle aria-pressed="false" aria-label="Music">
+      <svg viewBox="0 0 10 10" aria-hidden="true"><path fill="currentColor" d="M1 3h2l2-2h1v8H5L3 7H1z" /><path
+          class="waves" fill="currentColor" d="M7 3h1v4H7zM9 2h1v6H9z" /><path class="mute" fill="currentColor"
+          d="M7 3h1v1H7zM9 3h1v1H9zM8 4h1v2H8zM7 6h1v1H7zM9 6h1v1H9z" /></svg>
+    </button>
+  </nav>
 
   <dialog class="viewer" id="viewer" aria-label="Screenshot">
     <div class="viewer-bar">
@@ -715,36 +1129,318 @@
 
   <script>
     (function () {
-      // Reduced motion: stop the looping clips on their first frame.
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        document.querySelectorAll("video.loop").forEach((v) => {
-          v.removeAttribute("autoplay");
-          v.pause();
-          v.currentTime = 0;
+      const root = document.documentElement;
+      root.classList.add("js");
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* ---------- title letters ---------- */
+      let letterIndex = 0;
+      document.querySelectorAll(".title .word").forEach((word) => {
+        const text = word.textContent;
+        word.textContent = "";
+        word.setAttribute("aria-hidden", "true");
+        [...text].forEach((ch) => {
+          const span = document.createElement("span");
+          span.className = "ch";
+          span.textContent = ch;
+          span.style.setProperty("--i", letterIndex++);
+          word.appendChild(span);
+        });
+      });
+
+      /* ---------- audio: the game's room music ---------- */
+      const MUSIC_VOLUME = 0.55;
+      const FADE = 1.2;
+      const tracks = {};
+      let ctx = null;
+      let soundOn = false;
+      let ducked = false;
+      let currentTrack = null;
+
+      function track(name) {
+        if (!tracks[name]) {
+          const el = new Audio(`assets/audio/${name}.mp3`);
+          el.loop = true;
+          el.preload = "auto";
+          const gain = ctx.createGain();
+          gain.gain.value = 0;
+          ctx.createMediaElementSource(el).connect(gain).connect(ctx.destination);
+          tracks[name] = { el, gain, timer: null };
+        }
+        return tracks[name];
+      }
+
+      function fade(t, value) {
+        const now = ctx.currentTime;
+        t.gain.gain.cancelScheduledValues(now);
+        t.gain.gain.setValueAtTime(t.gain.gain.value, now);
+        t.gain.gain.linearRampToValueAtTime(value, now + FADE);
+      }
+
+      function playTrack(name) {
+        currentTrack = name;
+        if (!soundOn || !name) return;
+        Object.keys(tracks).forEach((other) => {
+          if (other === name) return;
+          const t = tracks[other];
+          fade(t, 0);
+          clearTimeout(t.timer);
+          t.timer = setTimeout(() => t.el.pause(), FADE * 1000 + 100);
+        });
+        const t = track(name);
+        clearTimeout(t.timer);
+        if (t.el.paused) t.el.play().catch(() => { });
+        fade(t, ducked ? 0 : MUSIC_VOLUME);
+      }
+
+      function stopAll() {
+        Object.values(tracks).forEach((t) => {
+          fade(t, 0);
+          clearTimeout(t.timer);
+          t.timer = setTimeout(() => t.el.pause(), FADE * 1000 + 100);
         });
       }
 
-      // Screenshot viewer. Without JS, each link opens the full image.
-      const viewer = document.getElementById("viewer");
-      if (!viewer || typeof viewer.showModal !== "function") return;
-      const img = document.getElementById("viewer-img");
-      const caption = document.getElementById("viewer-caption");
+      function blip(name, volume = 0.6) {
+        if (!soundOn) return;
+        const el = new Audio(`assets/audio/${name}.mp3`);
+        el.volume = volume;
+        el.play().catch(() => { });
+      }
 
-      document.querySelectorAll(".shot-grid a").forEach((link) => {
-        link.addEventListener("click", (event) => {
+      // The elevator bell, made from two tones.
+      function ding() {
+        if (!soundOn || !ctx) return;
+        [[1318.5, 0], [1046.5, 0.18]].forEach(([freq, delay]) => {
+          const osc = ctx.createOscillator();
+          const g = ctx.createGain();
+          const t0 = ctx.currentTime + delay;
+          osc.type = "sine";
+          osc.frequency.value = freq;
+          g.gain.setValueAtTime(0, t0);
+          g.gain.linearRampToValueAtTime(0.16, t0 + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.001, t0 + 1.1);
+          osc.connect(g).connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 1.2);
+        });
+      }
+
+      const toggles = document.querySelectorAll("[data-sound-toggle]");
+      const toggleLabel = document.querySelector("[data-sound-label]");
+
+      function setSound(on) {
+        soundOn = on;
+        root.classList.toggle("sound-on", on);
+        toggles.forEach((b) => b.setAttribute("aria-pressed", String(on)));
+        if (toggleLabel) toggleLabel.textContent = on ? "Turn off the music" : "Turn on the music";
+        if (on) {
+          if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+          if (ctx.state === "suspended") ctx.resume();
+          playTrack(currentTrack);
+          blip("fx-pop");
+        } else if (ctx) {
+          stopAll();
+        }
+      }
+
+      toggles.forEach((b) => b.addEventListener("click", () => setSound(!soundOn)));
+
+      const trailer = document.getElementById("trailer");
+      if (trailer) {
+        trailer.addEventListener("play", () => {
+          ducked = true;
+          if (soundOn && tracks[currentTrack]) fade(tracks[currentTrack], 0);
+        });
+        const unduck = () => {
+          ducked = false;
+          if (soundOn) playTrack(currentTrack);
+        };
+        trailer.addEventListener("pause", unduck);
+        trailer.addEventListener("ended", unduck);
+      }
+
+      const signup = document.querySelector("[data-signup]");
+      if (signup) {
+        signup.addEventListener("submit", (event) => {
+          if (!soundOn || signup.dataset.sent) return;
           event.preventDefault();
-          const thumb = link.querySelector("img");
-          img.src = link.href;
-          img.alt = thumb.alt;
-          caption.textContent = link.dataset.caption || "";
-          viewer.showModal();
+          signup.dataset.sent = "1";
+          blip("fx-coin", 0.8);
+          setTimeout(() => signup.submit(), 350);
+        });
+      }
+
+      /* ---------- loops pause for reduced motion ---------- */
+      if (reduceMotion) {
+        document.querySelectorAll("video.loop").forEach((v) => {
+          v.removeAttribute("autoplay");
+          v.pause();
+        });
+      }
+
+      /* ---------- scroll: rooms, kinetic type and the elevator ---------- */
+      const roof = document.getElementById("roof");
+      const floors = [...document.querySelectorAll(".floor")];
+      const stops = [roof, ...floors];
+      const words = [...document.querySelectorAll("[data-kinetic-word]")];
+      const numEl = document.querySelector("[data-floor-num]");
+      const arrowEl = document.querySelector("[data-arrow]");
+      const buttons = [...document.querySelectorAll("[data-go]")];
+      const floorNumber = (el) => (el.dataset.floor === "R" ? 99 : Number(el.dataset.floor));
+      let lastY = window.scrollY;
+      let current = null;
+      let settleTimer = null;
+      let ticking = false;
+
+      function stateFor(floor, t) {
+        // 0 rebuilding, 1 vacant (lights off), 2 open, 3 damaged (chaos floor only)
+        if (floor.classList.contains("lobby")) return 0;
+        if (t < 0.2) return 0;
+        if (t < 0.32) return 1;
+        if (floor.hasAttribute("data-chaos") && t > 0.5 && t < 0.7) return 3;
+        return 2;
+      }
+
+      function update() {
+        ticking = false;
+        const vh = window.innerHeight;
+        const y = window.scrollY;
+        const mid = vh / 2;
+
+        // Roof title: the two words pull apart as you leave the roof.
+        const roofRect = roof.getBoundingClientRect();
+        const h = Math.min(1, Math.max(0, -roofRect.top / roofRect.height));
+        if (!reduceMotion) {
+          words.forEach((w) => {
+            const dir = Number(w.dataset.kineticWord);
+            w.style.transform = `translateX(${dir * h * 38}vw)`;
+          });
+        }
+
+        floors.forEach((floor) => {
+          const r = floor.getBoundingClientRect();
+          const t = (vh - r.top) / (vh + r.height); // 0 below view, 1 above view
+          const visible = t > -0.05 && t < 1.05;
+          floor.classList.toggle("is-near", visible && !reduceMotion);
+          if (!visible) return;
+
+          const strip = floor.querySelector(".room-strip");
+          const win = floor.querySelector(".room-window");
+          const state = reduceMotion ? (floor.classList.contains("lobby") ? 0 : 2) : stateFor(floor, t);
+          if (strip.dataset.state !== String(state)) {
+            const wasBurning = strip.dataset.state === "3";
+            strip.dataset.state = String(state);
+            if (!floor.classList.contains("lobby")) strip.style.setProperty("--state", state);
+            floor.classList.toggle("is-open", state >= 2 || floor.classList.contains("lobby"));
+            floor.classList.toggle("is-burning", state === 3);
+            if (state === 3 && !wasBurning) blip("disaster-boom", 0.5);
+          }
+
+          if (!reduceMotion) {
+            const travel = strip.offsetWidth - win.offsetWidth;
+            const p = Math.min(1, Math.max(0, (t - 0.12) / 0.76));
+            const dir = floor.querySelector(".kinetic").dataset.dir === "1" ? 1 : -1;
+            const pan = dir === -1 ? -travel * p : -travel * (1 - p);
+            strip.style.transform = `translate3d(${pan.toFixed(1)}px,0,0)`;
+            const k = floor.querySelector(".kinetic");
+            // The lobby headline settles in place, so it is readable at the end of the page.
+            const swing = floor.classList.contains("lobby") ? Math.max(0, 0.55 - t) : 0.5 - t;
+            k.style.transform = `translate3d(${(dir * swing * 46).toFixed(2)}vw,0,0)`;
+          }
+        });
+
+        // Which stop is nearest the middle of the screen?
+        let best = stops[0];
+        let bestDist = Infinity;
+        stops.forEach((s) => {
+          const r = s.getBoundingClientRect();
+          const d = Math.abs(r.top + Math.min(r.height, vh) / 2 - mid);
+          if (d < bestDist) {
+            bestDist = d;
+            best = s;
+          }
+        });
+
+        // Floor counter: interpolate between the stops on either side of the middle.
+        let num = floorNumber(stops[0]);
+        for (let i = 0; i < stops.length - 1; i += 1) {
+          const a = stops[i].getBoundingClientRect();
+          const b = stops[i + 1].getBoundingClientRect();
+          const ay = a.top + Math.min(a.height, vh) / 2;
+          const by = b.top + Math.min(b.height, vh) / 2;
+          if (mid >= ay && mid <= by) {
+            const f = (mid - ay) / (by - ay || 1);
+            num = Math.round(floorNumber(stops[i]) + (floorNumber(stops[i + 1]) - floorNumber(stops[i])) * f);
+            break;
+          }
+          if (i === stops.length - 2 && mid > by) num = 1;
+        }
+        if (y < 40) num = 99;
+        numEl.textContent = num >= 99 ? "R" : num <= 1 ? "L" : String(num);
+        arrowEl.textContent = y > lastY + 1 ? "▼" : y < lastY - 1 ? "▲" : "";
+        lastY = y;
+
+        if (best !== current) {
+          if (current) current.classList.remove("is-current");
+          current = best;
+          current.classList.add("is-current");
+          buttons.forEach((b) => b.setAttribute("aria-current", String(b.dataset.go === current.id)));
+          playTrack(current.dataset.track);
+        }
+
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(() => {
+          arrowEl.textContent = "";
+          if (current && current.dataset.dinged !== "1") {
+            stops.forEach((s) => delete s.dataset.dinged);
+            current.dataset.dinged = "1";
+            ding();
+          }
+        }, 350);
+      }
+
+      function requestUpdate() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      }
+
+      window.addEventListener("scroll", requestUpdate, { passive: true });
+      window.addEventListener("resize", requestUpdate);
+      roof.dataset.dinged = "1";
+      update();
+
+      buttons.forEach((b) => {
+        b.addEventListener("click", (event) => {
+          const target = document.getElementById(b.dataset.go);
+          if (!target) return;
+          event.preventDefault();
+          blip("fx-zip", 0.5);
+          target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          history.replaceState(null, "", `#${b.dataset.go}`);
         });
       });
 
-      // Click on the backdrop closes the viewer.
-      viewer.addEventListener("click", (event) => {
-        if (event.target === viewer) viewer.close();
-      });
+      /* ---------- screenshot viewer ---------- */
+      const viewer = document.getElementById("viewer");
+      if (viewer && typeof viewer.showModal === "function") {
+        const img = document.getElementById("viewer-img");
+        const caption = document.getElementById("viewer-caption");
+        document.querySelectorAll(".shot-grid a").forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            img.src = link.href;
+            img.alt = link.querySelector("img").alt;
+            caption.textContent = link.dataset.caption || "";
+            viewer.showModal();
+          });
+        });
+        viewer.addEventListener("click", (event) => {
+          if (event.target === viewer) viewer.close();
+        });
+      }
     })();
   </script>
 </body>
