@@ -1435,8 +1435,9 @@
       </section>
 
       <section class="floor lobby" id="lobby" data-label="L" data-track="going-up" aria-label="Lobby">
-        <div class="scene">
+        <div class="scene" data-rider data-lobby>
           <span class="art" style="--sprite:url(assets/sprites/lobby.png)"></span>
+          <div class="part part--shaft"></div>
           <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian3.png);--dur:18s;--delay:-7s"></span>
           <span class="sprite person stroll face-left" style="--src:url(assets/sprites/walk-civilian1.png);--dur:22s;--delay:-2s"></span>
           <span class="sprite person stroll" style="--src:url(assets/sprites/walk-chef.png);--dur:27s;--delay:-19s"></span>
@@ -1758,11 +1759,15 @@
         const rooms = [...floor.querySelectorAll("[data-rider]")].filter((r) => r.offsetParent);
         if (!rooms.length) return;
         const room = pick(rooms);
-        const fromRight = !!room.closest(".part--left");
+        const inLobby = room.hasAttribute("data-lobby");
+        // In the lobby the rider leaves the shaft in either direction; on a floor, toward the room.
+        const fromRight = inLobby ? Math.random() < 0.5 : !!room.closest(".part--left");
+        const units = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--units")) || 704;
+        const shaftAt = ((384 + 18) / units) * 100;
         const p = document.createElement("span");
         p.className = `sprite person rider${fromRight ? " face-left" : ""}`;
         p.style.setProperty("--src", `url(assets/sprites/walk-${pick(RIDERS)}.png)`);
-        p.style.left = fromRight ? "95%" : "-6%";
+        p.style.left = inLobby ? `${shaftAt}%` : fromRight ? "95%" : "-6%";
         room.appendChild(p);
         requestAnimationFrame(() => requestAnimationFrame(() => {
           p.style.left = fromRight ? "-12%" : "104%";
@@ -1774,8 +1779,8 @@
         const shaft = floor.querySelector(".part--shaft");
         const box = floorsEl.getBoundingClientRect();
         const r = shaft.getBoundingClientRect();
-        const unit = r.height / 88;
-        return { top: r.top - box.top + 24 * unit, left: r.left - box.left + 8 * unit, unit };
+        const unit = r.width / 64;
+        return { top: r.bottom - box.top - 64 * unit, left: r.left - box.left + 8 * unit, unit };
       }
 
       function sizeCab() {
@@ -1830,6 +1835,10 @@
 
       function nearestStop() {
         const mid = window.innerHeight / 2;
+        // The lobby is the last thing on the page, so the bottom of the page means the lobby.
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8) {
+          return floors[floors.length - 1];
+        }
         let best = stops[0];
         let bestDist = Infinity;
         stops.forEach((s) => {
