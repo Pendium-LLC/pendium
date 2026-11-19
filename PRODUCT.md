@@ -39,8 +39,8 @@ brand
 ## Visual System
 
 - The homepage uses Pendium's own look: dark neutral background, Outfit and IBM Plex Mono, and the ASCII pendulum.
-- Each product card shows its product's own palette on hover, and at all times on touch screens. The cards set the palette through `--card-*` custom properties in `index.html`.
-- A product's own page uses that product's look, not Pendium's. The Lofty Ambitions page uses the game's palette and Pixelify Sans.
+- Each product gets one large image-led tile, always in its own palette and type: the game's cover art in Pixelify Sans, the Hollerback macaw with a call transcript in Bricolage Grotesque, and an Emeri credential in navy and gold. The whole tile is one link.
+- A product's own page uses that product's look, not Pendium's. The Lofty Ambitions page is the game's tower: real room sprites, the game's room music, and an elevator panel for navigation. `scripts/build-lofty-sprites.py` cuts the sprites from the game repo.
 
 ## Anti-references
 
