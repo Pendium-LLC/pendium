@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600&family=Pixelify+Sans:wght@700&family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600&family=Special+Gothic:wght@400;500&family=Pixelify+Sans:wght@700&family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap"
     rel="stylesheet" />
   <style>
     :root {
@@ -409,66 +409,69 @@
       color: #0b1210;
     }
 
-    /* Emeri: the credential itself, navy and gold */
+    /* Emeri: a certificate in its own paper, ink and gold, with an engraved rosette */
     .tile--emeri {
-      color: #f6f1e7;
+      color: #211d3d;
       background:
-        radial-gradient(70% 90% at 85% 20%, rgba(199, 154, 58, 0.22), transparent 60%),
-        linear-gradient(160deg, #2c2752 0%, #211d3d 45%, #15122a 100%);
+        radial-gradient(90% 70% at 100% 0%, rgba(199, 154, 58, 0.1), transparent 60%),
+        linear-gradient(170deg, #fbfaf7 0%, #f4f0e6 100%);
+      font-family: "Special Gothic", var(--sans);
     }
 
-    .credential {
+    /* A certificate frame: two thin gold rules set inside the edge. */
+    .tile--emeri::before,
+    .tile--emeri::after {
+      content: "";
       position: absolute;
-      top: 28px;
-      right: 30px;
-      width: 230px;
-      padding: 18px 18px 16px;
+      pointer-events: none;
       border-radius: 14px;
-      background: #fbfaf7;
-      color: #211d3d;
-      box-shadow: 0 24px 40px -18px rgba(0, 0, 0, 0.6);
-      transform: rotate(4deg);
-      transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
-      text-align: center;
     }
 
-    .tile--emeri:hover .credential {
-      transform: rotate(1deg) translateY(-4px);
+    .tile--emeri::before {
+      inset: 12px;
+      border: 1px solid rgba(199, 154, 58, 0.6);
     }
 
-    .credential .emeri-logo {
-      width: 58px;
-      margin: 0 auto 12px;
-      color: #211d3d;
+    .tile--emeri::after {
+      inset: 17px;
+      border-radius: 10px;
+      border: 1px solid rgba(199, 154, 58, 0.28);
     }
 
-    .credential svg.seal {
-      display: block;
-      width: 78px;
-      height: 78px;
-      margin: 0 auto 10px;
+    .rosette {
+      position: absolute;
+      z-index: -1;
+      top: 50%;
+      right: -110px;
+      width: 470px;
+      height: 470px;
+      transform: translateY(-58%) rotate(0deg);
+      opacity: 0.75;
+      transition: transform 1600ms cubic-bezier(0.2, 0.7, 0.2, 1);
     }
 
-    .credential strong {
-      display: block;
-      font-size: 17px;
-      font-weight: 500;
-      line-height: 1.2;
-    }
-
-    .credential small {
-      display: block;
-      font-size: 11.5px;
-      margin-top: 6px;
-      color: #5d5875;
+    .tile--emeri:hover .rosette {
+      transform: translateY(-58%) rotate(12deg);
     }
 
     .tile--emeri .tile-caption {
-      padding-right: 28px;
+      padding: 0 40px 40px;
+    }
+
+    .tile--emeri .tile-kind {
+      color: #8a671f;
+      opacity: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .tile--emeri .tile-name {
+      margin: 4px 0 4px;
     }
 
     .tile--emeri .tile-line {
-      max-width: 34ch;
+      max-width: 30ch;
+      color: #4a4560;
+      opacity: 1;
     }
 
     .emeri-logo {
@@ -478,12 +481,19 @@
     }
 
     .tile--emeri .tile-name .emeri-logo {
-      width: 96px;
+      width: 150px;
     }
 
     .tile--emeri .tile-go {
-      background: #c79a3a;
+      background: transparent;
       color: #211d3d;
+      border: 1px solid #211d3d;
+      transition: background 200ms ease, color 200ms ease, transform 160ms ease;
+    }
+
+    .tile--emeri:hover .tile-go {
+      background: #211d3d;
+      color: #fbfaf7;
     }
 
     /* Layout: the game's key art runs full width on top; the other two sit side by side below. */
@@ -585,14 +595,20 @@
         min-height: 520px;
       }
 
-      .credential {
-        top: 26px;
-        right: 50%;
-        transform: translateX(50%) rotate(3deg);
+      .rosette {
+        top: -70px;
+        right: -90px;
+        width: 360px;
+        height: 360px;
+        transform: none;
       }
 
-      .tile--emeri:hover .credential {
-        transform: translateX(50%) rotate(1deg) translateY(-4px);
+      .tile--emeri:hover .rosette {
+        transform: rotate(12deg);
+      }
+
+      .tile--emeri .tile-caption {
+        padding: 0 32px 34px;
       }
 
       .tile-caption {
@@ -610,7 +626,7 @@
     @media (prefers-reduced-motion: reduce) {
       .tile-art,
       .tile-go,
-      .credential {
+      .rosette {
         transition: none;
       }
     }
@@ -647,7 +663,7 @@
         <ul class="tiles">
           <li>
             <a class="tile tile--lofty" href="/lofty-ambitions/">
-              <img class="tile-art" src="assets/tiles/lofty-key-art.webp" width="1585" height="992" alt="" />
+              <img class="tile-art" src="assets/tiles/lofty-key-art.webp?v=20261119" width="1585" height="992" alt="" />
               <span class="tile-caption">
                 <span class="tile-kind">Game, in development</span>
                 <span class="tile-name">Lofty Ambitions</span>
@@ -674,12 +690,7 @@
           </li>
           <li>
             <a class="tile tile--emeri" href="https://emeri.org">
-              <span class="credential" aria-hidden="true">
-                <svg class="emeri-logo" viewBox="0 0 240 68" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M21.8731 67.9219C17.5914 67.9219 13.7944 66.9929 10.4821 65.1348C7.21025 63.2363 4.64526 60.6713 2.78716 57.4398C0.929052 54.1679 0 50.4921 0 46.4123C0 41.9287 1.05023 37.9903 3.1507 34.5972C5.25116 31.1638 7.97773 28.4776 11.3304 26.5387C14.7235 24.5998 18.3387 23.6304 22.1761 23.6304C27.8716 23.6304 32.3149 25.3875 35.5059 28.9017C38.697 32.416 40.2926 37.0208 40.2926 42.7163V45.14H11.6333V39.9292H30.4769L28.841 42.4134V38.9597C28.841 35.9302 28.1745 33.547 26.8415 31.8101C25.5489 30.0731 23.7312 29.2047 21.3884 29.2047C19.0456 29.2047 17.0663 30.2145 15.4505 32.2342C13.8348 34.2135 13.0269 37.2834 13.0269 41.4439V43.4434C13.0269 47.9271 14.2387 51.5423 16.6623 54.2891C19.1264 57.0359 22.3982 58.4092 26.478 58.4092C28.6996 58.4092 30.6991 58.0053 32.4764 57.1974C34.2941 56.3896 36.0513 55.0162 37.7478 53.0773L40.7773 55.9856C38.9596 59.9038 36.3946 62.8727 33.0823 64.8924C29.7701 66.9121 26.0337 67.9219 21.8731 67.9219Z"/><path d="M43.8989 67.1948L43.5959 62.7112L49.655 61.0146C49.6954 60.5703 49.7559 59.4191 49.8367 57.561C49.9579 55.6625 50.0589 53.5822 50.1397 51.3202L50.2609 43.9887C50.2205 42.1306 50.1397 40.4745 50.0185 39.0203C49.8973 37.5258 49.6954 35.8898 49.4126 34.1125L43.2324 32.7795V28.2958L60.5612 23.8121L63.3484 25.5087L62.7425 31.2042L63.0454 31.3253C65.1055 28.6594 67.2666 26.7205 69.5286 25.5087C71.831 24.2565 74.2143 23.6304 76.6783 23.6304C80.5157 23.6304 83.8885 25.0643 86.7969 27.9323C89.7456 30.8002 91.2199 35.2031 91.2199 41.141L91.3411 51.199C91.3411 53.3802 91.3815 55.4403 91.4623 57.3792C91.5431 59.2777 91.6643 60.4895 91.8259 61.0146L96.976 62.7112L96.7337 67.1948H73.4064L73.1034 62.7112L78.0113 61.0146C78.1324 60.0452 78.2334 58.6112 78.3142 56.7127C78.395 54.7738 78.4354 52.9561 78.4354 51.2596L78.3142 42.171C78.3142 38.8184 77.6073 36.4553 76.1935 35.0819C74.7798 33.6682 73.0024 32.9613 70.8616 32.9613C69.4074 32.9613 67.9735 33.3248 66.5597 34.0519C65.1863 34.779 64.0553 35.7888 63.1666 37.0814V51.3202C63.1666 53.4206 63.207 55.4403 63.2878 57.3792C63.3686 59.2777 63.4898 60.4895 63.6513 61.0146L68.9833 62.7112L68.6803 67.1948H43.8989ZM101.278 67.1948L100.975 62.7112L105.943 61.0146C106.065 60.0452 106.166 58.591 106.246 56.6521C106.368 54.6728 106.428 52.8753 106.428 51.2596L106.186 43.2616C106.186 39.4647 105.418 36.7987 103.883 35.2637C102.348 33.7288 100.47 32.9613 98.2484 32.9613C96.7135 32.9613 95.2189 33.3046 93.7647 33.9913C92.351 34.6376 91.1796 35.5869 90.2505 36.8391L87.2816 33.3248C91.9268 26.8619 97.279 23.6304 103.338 23.6304C107.943 23.6304 111.72 25.1451 114.668 28.1746C117.617 31.2042 119.092 35.5061 119.092 41.0804L119.273 51.199C119.273 53.3802 119.293 55.4403 119.334 57.3792C119.415 59.2777 119.556 60.4895 119.758 61.0146L125.756 62.7112L125.514 67.1948H101.278Z"/><path d="M149.239 67.9219C144.958 67.9219 141.161 66.9929 137.848 65.1348C134.577 63.2363 132.012 60.6713 130.154 57.4398C128.295 54.1679 127.366 50.4921 127.366 46.4123C127.366 41.9287 128.417 37.9903 130.517 34.5972C132.618 31.1638 135.344 28.4776 138.697 26.5387C142.09 24.5998 145.705 23.6304 149.542 23.6304C155.238 23.6304 159.681 25.3875 162.872 28.9017C166.063 32.416 167.659 37.0208 167.659 42.7163V45.14H139V39.9292H157.843L156.207 42.4134V38.9597C156.207 35.9302 155.541 33.547 154.208 31.8101C152.915 30.0731 151.098 29.2047 148.755 29.2047C146.412 29.2047 144.433 30.2145 142.817 32.2342C141.201 34.2135 140.393 37.2834 140.393 41.4439V43.4434C140.393 47.9271 141.605 51.5423 144.029 54.2891C146.493 57.0359 149.765 58.4092 153.844 58.4092C156.066 58.4092 158.065 58.0053 159.843 57.1974C161.661 56.3896 163.418 55.0162 165.114 53.0773L168.144 55.9856C166.326 59.9038 163.761 62.8727 160.449 64.8924C157.136 66.9121 153.4 67.9219 149.239 67.9219Z"/><path d="M172.898 67.1947L172.595 62.711L178.654 61.0145C178.695 60.5702 178.755 59.3987 178.836 57.5003C178.957 55.5614 179.058 53.5013 179.139 51.32L179.26 43.9886C179.26 42.1305 179.179 40.4744 179.018 39.0202C178.897 37.5256 178.695 35.8897 178.412 34.1124L172.232 32.7794V28.2957L189.318 23.812L191.984 25.5085L191.56 33.2641L191.863 33.3247C193.681 29.7297 195.539 27.2859 197.437 25.9933C199.376 24.6603 201.376 23.9938 203.436 23.9938C205.173 23.9938 206.708 24.4987 208.041 25.5085C209.414 26.478 210.101 28.0331 210.101 30.174C210.101 32.2745 209.374 33.9508 207.919 35.203C206.506 36.4148 204.829 37.0207 202.89 37.0207C201.315 37.0207 199.881 36.738 198.588 36.1724C197.336 35.6069 195.983 34.5769 194.529 33.0823L197.437 33.3247C195.377 34.6577 193.64 36.7582 192.226 39.6261L192.348 47.2605C192.388 50.8959 192.449 53.9456 192.529 56.4096C192.61 58.8736 192.691 60.4086 192.772 61.0145L201.254 62.5293L201.012 67.1947H172.898Z"/><path d="M213.34 67.1947L213.098 62.5293L219.52 61.0145C219.561 60.6106 219.621 59.4795 219.702 57.6214C219.823 55.7229 219.924 53.6225 220.005 51.32L220.066 44.1098C220.066 42.1305 220.005 40.3936 219.884 38.899C219.763 37.4044 219.561 35.8089 219.278 34.1124L212.795 32.7794V28.2957L230.911 23.812L233.638 25.5085C233.476 27.609 233.335 29.7095 233.214 31.8099C233.093 33.9104 233.032 36.2734 233.032 38.899V51.32C233.032 53.4205 233.072 55.4402 233.153 57.3791C233.274 59.318 233.416 60.5298 233.577 61.0145L240 62.5293L239.758 67.1947H213.34ZM226.791 16.2382C224.085 16.2382 221.964 15.4303 220.429 13.8146C218.894 12.1585 218.127 10.26 218.127 8.11911C218.127 5.93786 218.894 4.03936 220.429 2.42361C221.964 0.807871 224.085 0 226.791 0C229.498 0 231.578 0.807871 233.032 2.42361C234.486 4.03936 235.213 5.93786 235.213 8.11911C235.213 10.26 234.486 12.1585 233.032 13.8146C231.578 15.4303 229.498 16.2382 226.791 16.2382Z"/></svg>
-                <svg class="seal" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="37" fill="none" stroke="#c79a3a" stroke-width="2"/><circle cx="40" cy="40" r="30" fill="none" stroke="#c79a3a" stroke-width="1"/><g stroke="#c79a3a" stroke-width="1.4"><line x1="40" y1="5" x2="40" y2="11" transform="rotate(0 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(15 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(30 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(45 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(60 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(75 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(90 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(105 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(120 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(135 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(150 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(165 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(180 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(195 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(210 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(225 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(240 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(255 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(270 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(285 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(300 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(315 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(330 40 40)"/><line x1="40" y1="5" x2="40" y2="11" transform="rotate(345 40 40)"/></g><path d="M40 16 L44 34 L62 40 L44 46 L40 64 L36 46 L18 40 L36 34 Z" fill="#c79a3a" opacity="0.35"/><circle cx="40" cy="40" r="13" fill="#211d3d"/><text x="40" y="45" text-anchor="middle" font-family="Outfit, sans-serif" font-size="13" font-weight="600" fill="#c79a3a">E4</text></svg>
-                <strong>Exceptional with AI</strong>
-                <small>Verify this credential at emeri.org</small>
-              </span>
+              <svg class="rosette" viewBox="-200 -200 400 400" aria-hidden="true" focusable="false"><g fill="none" stroke="#c79a3a" stroke-width="0.55"><circle r="194"/><circle r="189" stroke-width="0.4"/><ellipse rx="176" ry="54" transform="rotate(0)"/><ellipse rx="176" ry="54" transform="rotate(3)"/><ellipse rx="176" ry="54" transform="rotate(6)"/><ellipse rx="176" ry="54" transform="rotate(9)"/><ellipse rx="176" ry="54" transform="rotate(12)"/><ellipse rx="176" ry="54" transform="rotate(15)"/><ellipse rx="176" ry="54" transform="rotate(18)"/><ellipse rx="176" ry="54" transform="rotate(21)"/><ellipse rx="176" ry="54" transform="rotate(24)"/><ellipse rx="176" ry="54" transform="rotate(27)"/><ellipse rx="176" ry="54" transform="rotate(30)"/><ellipse rx="176" ry="54" transform="rotate(33)"/><ellipse rx="176" ry="54" transform="rotate(36)"/><ellipse rx="176" ry="54" transform="rotate(39)"/><ellipse rx="176" ry="54" transform="rotate(42)"/><ellipse rx="176" ry="54" transform="rotate(45)"/><ellipse rx="176" ry="54" transform="rotate(48)"/><ellipse rx="176" ry="54" transform="rotate(51)"/><ellipse rx="176" ry="54" transform="rotate(54)"/><ellipse rx="176" ry="54" transform="rotate(57)"/><ellipse rx="176" ry="54" transform="rotate(60)"/><ellipse rx="176" ry="54" transform="rotate(63)"/><ellipse rx="176" ry="54" transform="rotate(66)"/><ellipse rx="176" ry="54" transform="rotate(69)"/><ellipse rx="176" ry="54" transform="rotate(72)"/><ellipse rx="176" ry="54" transform="rotate(75)"/><ellipse rx="176" ry="54" transform="rotate(78)"/><ellipse rx="176" ry="54" transform="rotate(81)"/><ellipse rx="176" ry="54" transform="rotate(84)"/><ellipse rx="176" ry="54" transform="rotate(87)"/><ellipse rx="176" ry="54" transform="rotate(90)"/><ellipse rx="176" ry="54" transform="rotate(93)"/><ellipse rx="176" ry="54" transform="rotate(96)"/><ellipse rx="176" ry="54" transform="rotate(99)"/><ellipse rx="176" ry="54" transform="rotate(102)"/><ellipse rx="176" ry="54" transform="rotate(105)"/><ellipse rx="176" ry="54" transform="rotate(108)"/><ellipse rx="176" ry="54" transform="rotate(111)"/><ellipse rx="176" ry="54" transform="rotate(114)"/><ellipse rx="176" ry="54" transform="rotate(117)"/><ellipse rx="176" ry="54" transform="rotate(120)"/><ellipse rx="176" ry="54" transform="rotate(123)"/><ellipse rx="176" ry="54" transform="rotate(126)"/><ellipse rx="176" ry="54" transform="rotate(129)"/><ellipse rx="176" ry="54" transform="rotate(132)"/><ellipse rx="176" ry="54" transform="rotate(135)"/><ellipse rx="176" ry="54" transform="rotate(138)"/><ellipse rx="176" ry="54" transform="rotate(141)"/><ellipse rx="176" ry="54" transform="rotate(144)"/><ellipse rx="176" ry="54" transform="rotate(147)"/><ellipse rx="176" ry="54" transform="rotate(150)"/><ellipse rx="176" ry="54" transform="rotate(153)"/><ellipse rx="176" ry="54" transform="rotate(156)"/><ellipse rx="176" ry="54" transform="rotate(159)"/><ellipse rx="176" ry="54" transform="rotate(162)"/><ellipse rx="176" ry="54" transform="rotate(165)"/><ellipse rx="176" ry="54" transform="rotate(168)"/><ellipse rx="176" ry="54" transform="rotate(171)"/><ellipse rx="176" ry="54" transform="rotate(174)"/><ellipse rx="176" ry="54" transform="rotate(177)"/><circle r="92" stroke-width="0.9"/><circle r="86"/><ellipse rx="80" ry="26" transform="rotate(0)"/><ellipse rx="80" ry="26" transform="rotate(5)"/><ellipse rx="80" ry="26" transform="rotate(10)"/><ellipse rx="80" ry="26" transform="rotate(15)"/><ellipse rx="80" ry="26" transform="rotate(20)"/><ellipse rx="80" ry="26" transform="rotate(25)"/><ellipse rx="80" ry="26" transform="rotate(30)"/><ellipse rx="80" ry="26" transform="rotate(35)"/><ellipse rx="80" ry="26" transform="rotate(40)"/><ellipse rx="80" ry="26" transform="rotate(45)"/><ellipse rx="80" ry="26" transform="rotate(50)"/><ellipse rx="80" ry="26" transform="rotate(55)"/><ellipse rx="80" ry="26" transform="rotate(60)"/><ellipse rx="80" ry="26" transform="rotate(65)"/><ellipse rx="80" ry="26" transform="rotate(70)"/><ellipse rx="80" ry="26" transform="rotate(75)"/><ellipse rx="80" ry="26" transform="rotate(80)"/><ellipse rx="80" ry="26" transform="rotate(85)"/><ellipse rx="80" ry="26" transform="rotate(90)"/><ellipse rx="80" ry="26" transform="rotate(95)"/><ellipse rx="80" ry="26" transform="rotate(100)"/><ellipse rx="80" ry="26" transform="rotate(105)"/><ellipse rx="80" ry="26" transform="rotate(110)"/><ellipse rx="80" ry="26" transform="rotate(115)"/><ellipse rx="80" ry="26" transform="rotate(120)"/><ellipse rx="80" ry="26" transform="rotate(125)"/><ellipse rx="80" ry="26" transform="rotate(130)"/><ellipse rx="80" ry="26" transform="rotate(135)"/><ellipse rx="80" ry="26" transform="rotate(140)"/><ellipse rx="80" ry="26" transform="rotate(145)"/><ellipse rx="80" ry="26" transform="rotate(150)"/><ellipse rx="80" ry="26" transform="rotate(155)"/><ellipse rx="80" ry="26" transform="rotate(160)"/><ellipse rx="80" ry="26" transform="rotate(165)"/><ellipse rx="80" ry="26" transform="rotate(170)"/><ellipse rx="80" ry="26" transform="rotate(175)"/><circle r="34" stroke-width="0.9"/><circle r="29"/><line x1="29.0" y1="0.0" x2="14.0" y2="0.0"/><line x1="28.0" y1="7.5" x2="13.5" y2="3.6"/><line x1="25.1" y1="14.5" x2="12.1" y2="7.0"/><line x1="20.5" y1="20.5" x2="9.9" y2="9.9"/><line x1="14.5" y1="25.1" x2="7.0" y2="12.1"/><line x1="7.5" y1="28.0" x2="3.6" y2="13.5"/><line x1="0.0" y1="29.0" x2="0.0" y2="14.0"/><line x1="-7.5" y1="28.0" x2="-3.6" y2="13.5"/><line x1="-14.5" y1="25.1" x2="-7.0" y2="12.1"/><line x1="-20.5" y1="20.5" x2="-9.9" y2="9.9"/><line x1="-25.1" y1="14.5" x2="-12.1" y2="7.0"/><line x1="-28.0" y1="7.5" x2="-13.5" y2="3.6"/><line x1="-29.0" y1="0.0" x2="-14.0" y2="0.0"/><line x1="-28.0" y1="-7.5" x2="-13.5" y2="-3.6"/><line x1="-25.1" y1="-14.5" x2="-12.1" y2="-7.0"/><line x1="-20.5" y1="-20.5" x2="-9.9" y2="-9.9"/><line x1="-14.5" y1="-25.1" x2="-7.0" y2="-12.1"/><line x1="-7.5" y1="-28.0" x2="-3.6" y2="-13.5"/><line x1="-0.0" y1="-29.0" x2="-0.0" y2="-14.0"/><line x1="7.5" y1="-28.0" x2="3.6" y2="-13.5"/><line x1="14.5" y1="-25.1" x2="7.0" y2="-12.1"/><line x1="20.5" y1="-20.5" x2="9.9" y2="-9.9"/><line x1="25.1" y1="-14.5" x2="12.1" y2="-7.0"/><line x1="28.0" y1="-7.5" x2="13.5" y2="-3.6"/></g></svg>
               <span class="tile-caption">
                 <span class="tile-kind">Education</span>
                 <span class="tile-name"><svg class="emeri-logo" viewBox="0 0 240 68" fill="currentColor" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Emeri"><path d="M21.8731 67.9219C17.5914 67.9219 13.7944 66.9929 10.4821 65.1348C7.21025 63.2363 4.64526 60.6713 2.78716 57.4398C0.929052 54.1679 0 50.4921 0 46.4123C0 41.9287 1.05023 37.9903 3.1507 34.5972C5.25116 31.1638 7.97773 28.4776 11.3304 26.5387C14.7235 24.5998 18.3387 23.6304 22.1761 23.6304C27.8716 23.6304 32.3149 25.3875 35.5059 28.9017C38.697 32.416 40.2926 37.0208 40.2926 42.7163V45.14H11.6333V39.9292H30.4769L28.841 42.4134V38.9597C28.841 35.9302 28.1745 33.547 26.8415 31.8101C25.5489 30.0731 23.7312 29.2047 21.3884 29.2047C19.0456 29.2047 17.0663 30.2145 15.4505 32.2342C13.8348 34.2135 13.0269 37.2834 13.0269 41.4439V43.4434C13.0269 47.9271 14.2387 51.5423 16.6623 54.2891C19.1264 57.0359 22.3982 58.4092 26.478 58.4092C28.6996 58.4092 30.6991 58.0053 32.4764 57.1974C34.2941 56.3896 36.0513 55.0162 37.7478 53.0773L40.7773 55.9856C38.9596 59.9038 36.3946 62.8727 33.0823 64.8924C29.7701 66.9121 26.0337 67.9219 21.8731 67.9219Z"/><path d="M43.8989 67.1948L43.5959 62.7112L49.655 61.0146C49.6954 60.5703 49.7559 59.4191 49.8367 57.561C49.9579 55.6625 50.0589 53.5822 50.1397 51.3202L50.2609 43.9887C50.2205 42.1306 50.1397 40.4745 50.0185 39.0203C49.8973 37.5258 49.6954 35.8898 49.4126 34.1125L43.2324 32.7795V28.2958L60.5612 23.8121L63.3484 25.5087L62.7425 31.2042L63.0454 31.3253C65.1055 28.6594 67.2666 26.7205 69.5286 25.5087C71.831 24.2565 74.2143 23.6304 76.6783 23.6304C80.5157 23.6304 83.8885 25.0643 86.7969 27.9323C89.7456 30.8002 91.2199 35.2031 91.2199 41.141L91.3411 51.199C91.3411 53.3802 91.3815 55.4403 91.4623 57.3792C91.5431 59.2777 91.6643 60.4895 91.8259 61.0146L96.976 62.7112L96.7337 67.1948H73.4064L73.1034 62.7112L78.0113 61.0146C78.1324 60.0452 78.2334 58.6112 78.3142 56.7127C78.395 54.7738 78.4354 52.9561 78.4354 51.2596L78.3142 42.171C78.3142 38.8184 77.6073 36.4553 76.1935 35.0819C74.7798 33.6682 73.0024 32.9613 70.8616 32.9613C69.4074 32.9613 67.9735 33.3248 66.5597 34.0519C65.1863 34.779 64.0553 35.7888 63.1666 37.0814V51.3202C63.1666 53.4206 63.207 55.4403 63.2878 57.3792C63.3686 59.2777 63.4898 60.4895 63.6513 61.0146L68.9833 62.7112L68.6803 67.1948H43.8989ZM101.278 67.1948L100.975 62.7112L105.943 61.0146C106.065 60.0452 106.166 58.591 106.246 56.6521C106.368 54.6728 106.428 52.8753 106.428 51.2596L106.186 43.2616C106.186 39.4647 105.418 36.7987 103.883 35.2637C102.348 33.7288 100.47 32.9613 98.2484 32.9613C96.7135 32.9613 95.2189 33.3046 93.7647 33.9913C92.351 34.6376 91.1796 35.5869 90.2505 36.8391L87.2816 33.3248C91.9268 26.8619 97.279 23.6304 103.338 23.6304C107.943 23.6304 111.72 25.1451 114.668 28.1746C117.617 31.2042 119.092 35.5061 119.092 41.0804L119.273 51.199C119.273 53.3802 119.293 55.4403 119.334 57.3792C119.415 59.2777 119.556 60.4895 119.758 61.0146L125.756 62.7112L125.514 67.1948H101.278Z"/><path d="M149.239 67.9219C144.958 67.9219 141.161 66.9929 137.848 65.1348C134.577 63.2363 132.012 60.6713 130.154 57.4398C128.295 54.1679 127.366 50.4921 127.366 46.4123C127.366 41.9287 128.417 37.9903 130.517 34.5972C132.618 31.1638 135.344 28.4776 138.697 26.5387C142.09 24.5998 145.705 23.6304 149.542 23.6304C155.238 23.6304 159.681 25.3875 162.872 28.9017C166.063 32.416 167.659 37.0208 167.659 42.7163V45.14H139V39.9292H157.843L156.207 42.4134V38.9597C156.207 35.9302 155.541 33.547 154.208 31.8101C152.915 30.0731 151.098 29.2047 148.755 29.2047C146.412 29.2047 144.433 30.2145 142.817 32.2342C141.201 34.2135 140.393 37.2834 140.393 41.4439V43.4434C140.393 47.9271 141.605 51.5423 144.029 54.2891C146.493 57.0359 149.765 58.4092 153.844 58.4092C156.066 58.4092 158.065 58.0053 159.843 57.1974C161.661 56.3896 163.418 55.0162 165.114 53.0773L168.144 55.9856C166.326 59.9038 163.761 62.8727 160.449 64.8924C157.136 66.9121 153.4 67.9219 149.239 67.9219Z"/><path d="M172.898 67.1947L172.595 62.711L178.654 61.0145C178.695 60.5702 178.755 59.3987 178.836 57.5003C178.957 55.5614 179.058 53.5013 179.139 51.32L179.26 43.9886C179.26 42.1305 179.179 40.4744 179.018 39.0202C178.897 37.5256 178.695 35.8897 178.412 34.1124L172.232 32.7794V28.2957L189.318 23.812L191.984 25.5085L191.56 33.2641L191.863 33.3247C193.681 29.7297 195.539 27.2859 197.437 25.9933C199.376 24.6603 201.376 23.9938 203.436 23.9938C205.173 23.9938 206.708 24.4987 208.041 25.5085C209.414 26.478 210.101 28.0331 210.101 30.174C210.101 32.2745 209.374 33.9508 207.919 35.203C206.506 36.4148 204.829 37.0207 202.89 37.0207C201.315 37.0207 199.881 36.738 198.588 36.1724C197.336 35.6069 195.983 34.5769 194.529 33.0823L197.437 33.3247C195.377 34.6577 193.64 36.7582 192.226 39.6261L192.348 47.2605C192.388 50.8959 192.449 53.9456 192.529 56.4096C192.61 58.8736 192.691 60.4086 192.772 61.0145L201.254 62.5293L201.012 67.1947H172.898Z"/><path d="M213.34 67.1947L213.098 62.5293L219.52 61.0145C219.561 60.6106 219.621 59.4795 219.702 57.6214C219.823 55.7229 219.924 53.6225 220.005 51.32L220.066 44.1098C220.066 42.1305 220.005 40.3936 219.884 38.899C219.763 37.4044 219.561 35.8089 219.278 34.1124L212.795 32.7794V28.2957L230.911 23.812L233.638 25.5085C233.476 27.609 233.335 29.7095 233.214 31.8099C233.093 33.9104 233.032 36.2734 233.032 38.899V51.32C233.032 53.4205 233.072 55.4402 233.153 57.3791C233.274 59.318 233.416 60.5298 233.577 61.0145L240 62.5293L239.758 67.1947H213.34ZM226.791 16.2382C224.085 16.2382 221.964 15.4303 220.429 13.8146C218.894 12.1585 218.127 10.26 218.127 8.11911C218.127 5.93786 218.894 4.03936 220.429 2.42361C221.964 0.807871 224.085 0 226.791 0C229.498 0 231.578 0.807871 233.032 2.42361C234.486 4.03936 235.213 5.93786 235.213 8.11911C235.213 10.26 234.486 12.1585 233.032 13.8146C231.578 15.4303 229.498 16.2382 226.791 16.2382Z"/></svg></span>
