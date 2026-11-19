@@ -204,7 +204,7 @@
     .title {
       font-family: var(--pixel);
       font-weight: 700;
-      font-size: clamp(64px, 13vw, 196px);
+      font-size: clamp(52px, 8.5vw, 124px);
       line-height: 0.86;
       letter-spacing: -0.01em;
       margin: 0 0 28px;
@@ -219,10 +219,6 @@
 
     .title .word + .word {
       padding-left: 0.32em;
-    }
-
-    .title .ch {
-      display: inline-block;
     }
 
     .tagline {
@@ -321,17 +317,14 @@
       opacity: 1;
     }
 
-    .kinetic {
+    .floor-title {
       font-family: var(--pixel);
       font-weight: 700;
-      font-size: clamp(60px, 11.5vw, 164px);
-      line-height: 0.95;
-      white-space: nowrap;
-      margin: 34px 0 26px;
-      padding-left: 28px;
+      font-size: clamp(30px, 3.6vw, 46px);
+      line-height: 1.1;
+      margin: 30px 28px 18px;
       color: var(--parchment);
-      text-shadow: 0.04em 0.04em 0 var(--ink-deep);
-      will-change: transform;
+      text-shadow: 3px 3px 0 var(--ink-deep);
     }
 
     /* ---------- the room: the hero of every floor ---------- */
@@ -884,10 +877,9 @@
       color: var(--ink);
     }
 
-    .lobby .kinetic {
-      font-size: clamp(48px, 8.5vw, 124px);
+    .lobby .floor-title {
       color: var(--ink);
-      text-shadow: 0.04em 0.04em 0 var(--gold);
+      text-shadow: 3px 3px 0 var(--gold);
     }
 
     .lobby .room {
@@ -1075,19 +1067,6 @@
       display: none;
     }
 
-    /* ---------- page-load: the title drops in like building blocks ---------- */
-
-    .js .title .ch {
-      animation: drop 520ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
-      animation-delay: calc(var(--i) * 45ms + 120ms);
-    }
-
-    @keyframes drop {
-      from {
-        transform: translateY(-120vh);
-      }
-    }
-
     /* ---------- layout breakpoints ---------- */
 
     @media (min-width: 900px) {
@@ -1119,8 +1098,8 @@
         width: 58px;
       }
 
-      .kinetic {
-        padding-left: 18px;
+      .floor-title {
+        margin: 24px 14px 14px;
       }
 
       /* On a phone the room keeps a readable size and scrolls sideways. */
@@ -1170,7 +1149,6 @@
 
     @media (prefers-reduced-motion: reduce) {
 
-      .js .title .ch,
       .person,
       .lot[data-state] .art,
       .lot[data-state] .dust,
@@ -1185,10 +1163,6 @@
       .crew,
       .meatball {
         transition: none !important;
-      }
-
-      .kinetic {
-        transform: none !important;
       }
 
       .btn {
@@ -1211,9 +1185,9 @@
     </nav>
 
     <div class="roof-body">
-      <h1 class="title" aria-label="Lofty Ambitions">
-        <span class="word" data-kinetic-word="-1">Lofty</span>
-        <span class="word" data-kinetic-word="1">Ambitions</span>
+      <h1 class="title">
+        <span class="word">Lofty</span>
+        <span class="word">Ambitions</span>
       </h1>
       <p class="tagline">A cozy pixel tower. Build homes, open shops and look after the little people who live
         there.</p>
@@ -1238,7 +1212,7 @@
         <span class="plate"><b>12F</b> Homes</span>
         <span class="now-playing">♪ Ninety Floors Up</span>
       </div>
-      <h2 class="kinetic" id="f12-title" data-dir="-1">Build it up</h2>
+      <h2 class="floor-title" id="f12-title">Build it up</h2>
       <div class="room-window">
         <div class="room build" data-build>
           <button class="lot" type="button" style="left:0" data-state="empty" aria-label="Build home 1">
@@ -1277,7 +1251,7 @@
         <span class="plate"><b>8F</b> Ramen bar</span>
         <span class="now-playing">♪ Steam on the Counter</span>
       </div>
-      <h2 class="kinetic" id="f08-title" data-dir="1">Open late</h2>
+      <h2 class="floor-title" id="f08-title">Open late</h2>
       <div class="room-window">
         <div class="room ramen">
           <span class="art" style="--sprite:url(assets/sprites/room-ramen.png);--rows:2;--row:1"></span>
@@ -1305,7 +1279,7 @@
         <span class="plate"><b>4F</b> Pizza parlor</span>
         <span class="now-playing">♪ Stairwell Samba</span>
       </div>
-      <h2 class="kinetic" id="f04-title" data-dir="-1">Meatballs!</h2>
+      <h2 class="floor-title" id="f04-title">Meatballs!</h2>
       <div class="room-window">
         <div class="room pizza" data-pizza>
           <span class="art" style="--sprite:url(assets/sprites/room-pizza.png)"></span>
@@ -1330,7 +1304,7 @@
         <span class="plate"><b>1F</b> Lobby</span>
         <span class="now-playing">♪ Going Up</span>
       </div>
-      <h2 class="kinetic" id="lobby-title" data-dir="1">Doors open soon</h2>
+      <h2 class="floor-title" id="lobby-title">Doors open soon</h2>
       <div class="room-window">
         <div class="room">
           <span class="art" style="--sprite:url(assets/sprites/lobby.png)"></span>
@@ -1388,21 +1362,6 @@
       root.classList.add("js");
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const wait = (ms) => new Promise((r) => setTimeout(r, reduceMotion ? Math.min(ms, 150) : ms));
-
-      /* ---------- title letters ---------- */
-      let letterIndex = 0;
-      document.querySelectorAll(".title .word").forEach((word) => {
-        const text = word.textContent;
-        word.textContent = "";
-        word.setAttribute("aria-hidden", "true");
-        [...text].forEach((ch) => {
-          const span = document.createElement("span");
-          span.className = "ch";
-          span.textContent = ch;
-          span.style.setProperty("--i", letterIndex++);
-          word.appendChild(span);
-        });
-      });
 
       /* ---------- audio: the game's room music and sounds ---------- */
       const MUSIC_VOLUME = 0.55;
@@ -1625,11 +1584,10 @@
 
       looseBtn.addEventListener("click", setLoose);
 
-      /* ---------- scroll: kinetic type and the elevator ---------- */
+      /* ---------- scroll: the elevator panel and music ---------- */
       const roof = document.getElementById("roof");
       const floors = [...document.querySelectorAll(".floor")];
       const stops = [roof, ...floors];
-      const words = [...document.querySelectorAll("[data-kinetic-word]")];
       const numEl = document.querySelector("[data-floor-num]");
       const arrowEl = document.querySelector("[data-arrow]");
       const buttons = [...document.querySelectorAll("[data-go]")];
@@ -1645,24 +1603,10 @@
         const y = window.scrollY;
         const mid = vh / 2;
 
-        const roofRect = roof.getBoundingClientRect();
-        const h = Math.min(1, Math.max(0, -roofRect.top / roofRect.height));
-        if (!reduceMotion) {
-          words.forEach((w) => {
-            w.style.transform = `translateX(${Number(w.dataset.kineticWord) * h * 38}vw)`;
-          });
-        }
-
         floors.forEach((floor) => {
           const r = floor.getBoundingClientRect();
           const t = (vh - r.top) / (vh + r.height);
           if (t < -0.05 || t > 1.05) return;
-          if (!reduceMotion) {
-            const k = floor.querySelector(".kinetic");
-            const dir = k.dataset.dir === "1" ? 1 : -1;
-            const swing = floor.classList.contains("lobby") ? Math.max(0, 0.55 - t) : 0.5 - t;
-            k.style.transform = `translate3d(${(dir * swing * 40).toFixed(2)}vw,0,0)`;
-          }
           // The meatballs get loose the first time you reach the pizza parlor.
           if (floor === pizzaFloor && !mishapStarted && t > 0.3) {
             mishapStarted = true;
