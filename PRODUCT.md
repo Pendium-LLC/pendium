@@ -40,7 +40,7 @@ brand
 
 - The homepage uses Pendium's own look: dark neutral background, Outfit and IBM Plex Mono, and the ASCII pendulum.
 - Each product gets one large image-led tile, always in its own palette and type: the game's cover art in Pixelify Sans, the Hollerback macaw with a call transcript in Bricolage Grotesque, and an Emeri credential in navy and gold. The whole tile is one link.
-- A product's own page uses that product's look, not Pendium's. The Lofty Ambitions page is the game's tower: real room sprites, the game's room music, and an elevator panel for navigation. `scripts/build-lofty-sprites.py` cuts the sprites from the game repo.
+- A product's own page uses that product's look, not Pendium's. The Lofty Ambitions page is the game's tower with three interactive floors built from the real room sprites: build homes, open the ramen bar, catch runaway meatballs. It plays the game's room music and uses no old footage. `scripts/build-lofty-sprites.py` cuts the sprites from the game repo.
 
 ## Anti-references
 
