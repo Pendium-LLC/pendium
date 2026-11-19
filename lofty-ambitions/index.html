@@ -43,7 +43,6 @@
       --tower-w: min(1120px, 100vw - 32px);
       /* The tower is 704 sprite units wide: a 384-unit room, a 64-unit shaft, a 256-unit room. */
       --units: 704;
-      --gutter: 40px;
     }
 
     * {
@@ -290,24 +289,7 @@
 
     .floor {
       position: relative;
-      display: grid;
-      grid-template-columns: var(--gutter) minmax(0, 1fr);
       border-bottom: 3px solid var(--ink-deep);
-    }
-
-    .num {
-      display: grid;
-      place-items: center;
-      background: var(--concrete-lo);
-      border-right: 3px solid var(--ink-deep);
-      font-family: var(--pixel);
-      font-weight: 700;
-      font-size: 15px;
-      color: rgba(243, 232, 207, 0.7);
-    }
-
-    .floor.is-current .num {
-      color: var(--gold);
     }
 
     .scene {
@@ -1168,15 +1150,10 @@
       :root {
         /* On a phone the tower shows the left room and the shaft. */
         --units: 448;
-        --gutter: 30px;
       }
 
       .part--right {
         display: none;
-      }
-
-      .num {
-        font-size: 12px;
       }
 
       .elevator {
@@ -1315,7 +1292,6 @@
     <div class="floors">
 
       <section class="floor" id="f10" data-label="10" data-track="ninety-floors-up" aria-label="Floor 10">
-        <span class="num" aria-hidden="true">10</span>
         <div class="scene">
           <div class="part part--left">
             <div class="room" data-rider>
@@ -1334,7 +1310,6 @@
       </section>
 
       <section class="floor" id="f09" data-label="9" data-track="ninety-floors-up" aria-label="Floor 9">
-        <span class="num" aria-hidden="true">9</span>
         <div class="scene">
           <div class="part part--left">
             <div class="room" data-shop data-rider>
@@ -1355,7 +1330,6 @@
       <!-- 8F: build homes -->
       <section class="floor" id="f08" data-label="8" data-track="ninety-floors-up" aria-label="Floor 8, empty lots">
         <span class="callout" aria-hidden="true">Tap a lot to build a home</span>
-        <span class="num" aria-hidden="true">8</span>
         <div class="scene">
           <div class="part part--left">
             <div class="room build" data-build>
@@ -1391,7 +1365,6 @@
 
       <section class="floor" id="f07" data-label="7" data-track="ninety-floors-up" aria-label="Floor 7">
         <span class="callout" aria-hidden="true">Mishaps pop up. Tap to call for help</span>
-        <span class="num" aria-hidden="true">7</span>
         <div class="scene">
           <div class="part part--left">
             <div class="room" data-shop data-rider data-mishap="duck" data-helper="the park ranger" data-count="3">
@@ -1413,7 +1386,6 @@
       <section class="floor" id="f06" data-label="6" data-track="steam-on-the-counter" data-track-dark="ninety-floors-up"
         data-needs-lights aria-label="Floor 6, ramen bar">
         <span class="callout" aria-hidden="true">Tap to open the ramen bar</span>
-        <span class="num" aria-hidden="true">6</span>
         <div class="scene">
           <div class="part part--left">
             <div class="room ramen">
@@ -1440,7 +1412,6 @@
       </section>
 
       <section class="floor" id="f05" data-label="5" data-track="stairwell-samba" aria-label="Floor 5">
-        <span class="num" aria-hidden="true">5</span>
         <div class="scene">
           <div class="part part--left">
             <div class="room" data-shop data-rider>
@@ -1460,7 +1431,6 @@
       </section>
 
       <section class="floor" id="f04" data-label="4" data-track="stairwell-samba" aria-label="Floor 4, pizza parlor">
-        <span class="num" aria-hidden="true">4</span>
         <div class="scene">
           <div class="part part--left">
             <div class="room" data-shop data-rider data-pizza data-mishap="meatball" data-helper="the cleanup crew" data-count="3">
@@ -1478,7 +1448,6 @@
       </section>
 
       <section class="floor" id="f03" data-label="3" data-track="stairwell-samba" aria-label="Floor 3">
-        <span class="num" aria-hidden="true">3</span>
         <div class="scene">
           <div class="part part--left">
             <div class="room" data-shop data-rider data-mishap="slime" data-helper="the slime squad" data-count="3">
@@ -1497,7 +1466,6 @@
       </section>
 
       <section class="floor lobby" id="lobby" data-label="L" data-track="going-up" aria-label="Lobby">
-        <span class="num" aria-hidden="true">L</span>
         <div class="scene">
           <span class="art" style="--sprite:url(assets/sprites/lobby.png)"></span>
           <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian3.png);--dur:18s;--delay:-7s"></span>
