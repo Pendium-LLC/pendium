@@ -59,6 +59,7 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      padding-bottom: var(--banner-h, 0px);
     }
 
     a {
@@ -172,7 +173,7 @@
 
     .roof-nav {
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start;
       padding: 22px 0 18px;
     }
 
@@ -190,7 +191,7 @@
     /* A parchment panel, like the game's own panels. */
     .intro {
       max-width: 520px;
-      padding: 22px 24px 24px;
+      padding: 18px 22px;
       background: var(--parchment);
       color: var(--ink);
       border: 3px solid var(--ink);
@@ -198,7 +199,7 @@
     }
 
     .intro p {
-      margin: 0 0 18px;
+      margin: 0;
       font-size: 19px;
       font-weight: 600;
       line-height: 1.5;
@@ -924,57 +925,6 @@
       clip-path: inset(0 -100vmax -100vmax);
     }
 
-    .launch {
-      display: grid;
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-      gap: 32px;
-      align-items: end;
-      padding: 72px 0 40px;
-    }
-
-    .launch h2 {
-      font-family: var(--pixel);
-      font-weight: 700;
-      font-size: clamp(30px, 3.6vw, 44px);
-      line-height: 1.1;
-      margin: 0 0 12px;
-      text-shadow: 3px 3px 0 var(--ink);
-    }
-
-    .launch p {
-      margin: 0;
-      max-width: 36ch;
-    }
-
-    .signup label {
-      display: block;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .signup-row {
-      display: flex;
-      gap: 12px;
-      max-width: 540px;
-    }
-
-    .signup input[type="email"] {
-      flex: 1;
-      min-width: 0;
-      font: inherit;
-      color: var(--ink);
-      background: #fffaf0;
-      border: 3px solid var(--ink);
-      border-radius: 0;
-      padding: 12px 14px;
-    }
-
-    .signup .fine {
-      font-size: 15px;
-      margin: 10px 0 0;
-      opacity: 0.8;
-    }
-
     .footer {
       display: flex;
       flex-wrap: wrap;
@@ -999,7 +949,7 @@
     .elevator {
       position: fixed;
       right: 16px;
-      top: 50%;
+      top: calc(50% - var(--banner-h, 0px) / 2);
       transform: translateY(-50%);
       z-index: 10;
       padding: 10px;
@@ -1091,38 +1041,119 @@
       box-shadow: 0 0 12px rgba(224, 179, 90, 0.7);
     }
 
-    .sound-btn {
-      display: grid;
-      place-items: center;
-      width: 44px;
-      height: 44px;
-      background: var(--parchment);
-      border: 2px solid var(--ink-deep);
-      cursor: pointer;
+    /* ---------- the music button, floating top right ---------- */
+
+    .music-btn {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      z-index: 20;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--pixel);
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1;
       color: var(--ink);
-      padding: 0;
+      background: var(--parchment);
+      border: 2px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      padding: 7px 11px;
+      cursor: pointer;
     }
 
-    .sound-btn[aria-pressed="true"] {
+    .music-btn:hover {
+      background: #fff6e0;
+    }
+
+    .music-btn[aria-pressed="true"] {
       background: var(--gold);
     }
 
-    .sound-btn svg {
-      width: 24px;
-      height: 24px;
+    .music-btn svg {
+      width: 18px;
+      height: 18px;
       shape-rendering: crispEdges;
     }
 
-    .sound-btn .waves {
+    .music-btn .waves,
+    .music-btn[aria-pressed="true"] .mute {
       display: none;
     }
 
-    .sound-btn[aria-pressed="true"] .waves {
+    .music-btn[aria-pressed="true"] .waves {
       display: inline;
     }
 
-    .sound-btn[aria-pressed="true"] .mute {
-      display: none;
+    /* ---------- the launch banner across the bottom ---------- */
+
+    .banner {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: rgba(23, 18, 29, 0.96);
+      border-top: 3px solid var(--gold);
+      box-shadow: 0 -6px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    .signup {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .banner-text {
+      font-family: var(--pixel);
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .signup input[type="email"] {
+      width: 260px;
+      font: inherit;
+      font-size: 16px;
+      color: var(--ink);
+      background: #fffaf0;
+      border: 2px solid var(--ink);
+      border-radius: 0;
+      padding: 7px 10px;
+    }
+
+    .signup .btn {
+      font-size: 16px;
+      padding: 8px 14px;
+      border-width: 2px;
+      box-shadow: 3px 3px 0 #000;
+    }
+
+    .banner-close {
+      flex: none;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      font-family: var(--pixel);
+      font-size: 22px;
+      line-height: 1;
+      color: var(--parchment);
+      background: transparent;
+      border: 2px solid rgba(243, 232, 207, 0.3);
+      cursor: pointer;
+    }
+
+    .banner-close:hover {
+      border-color: var(--parchment);
     }
 
     /* ---------- layout breakpoints ---------- */
@@ -1140,10 +1171,6 @@
         --gutter: 30px;
       }
 
-      body {
-        padding-bottom: 76px;
-      }
-
       .part--right {
         display: none;
       }
@@ -1154,7 +1181,7 @@
 
       .elevator {
         top: auto;
-        bottom: 12px;
+        bottom: calc(var(--banner-h, 0px) + 10px);
         right: 12px;
         transform: none;
         flex-direction: row;
@@ -1183,9 +1210,29 @@
         margin-top: 36px;
       }
 
-      .launch {
-        grid-template-columns: 1fr;
-        padding-top: 56px;
+      .banner {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+
+      .banner-text {
+        flex-basis: 100%;
+        font-size: 14px;
+      }
+
+      .signup {
+        justify-content: flex-start;
+        gap: 8px;
+      }
+
+      .signup input[type="email"] {
+        flex: 1;
+        width: auto;
+        min-width: 0;
+      }
+
+      .footer {
+        padding-bottom: 96px;
       }
     }
 
@@ -1210,9 +1257,6 @@
         border-right-width: 6px;
       }
 
-      .signup-row {
-        flex-direction: column;
-      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1259,14 +1303,6 @@
     </nav>
     <div class="intro">
       <p>A cozy pixel tower. Build homes, open shops and look after the little people who live there.</p>
-      <div class="actions">
-        <button class="btn" type="button" data-sound-toggle aria-pressed="false">
-          <svg viewBox="0 0 10 10" aria-hidden="true"><path fill="currentColor" d="M1 3h2l2-2h1v8H5L3 7H1z" /><path
-              class="waves" fill="currentColor" d="M7 3h1v4H7zM9 2h1v6H9z" /></svg>
-          <span data-sound-label>Turn on the music</span>
-        </button>
-        <a class="btn btn--quiet" href="#street">Notify me at launch</a>
-      </div>
     </div>
     <div class="rooftop">
       <h1 class="title">Lofty Ambitions</h1>
@@ -1475,29 +1511,33 @@
   </main>
 
   <div class="street" id="street">
-    <section class="launch" aria-labelledby="launch-title">
-      <div>
-        <h2 id="launch-title">Doors open soon</h2>
-        <p>Lofty Ambitions is in development. Leave your email and we'll tell you when it launches.</p>
-      </div>
-      <!-- Buttondown username: replace "pendium" in the action URL if the
-           Buttondown account uses a different name. -->
-      <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium" method="post"
-        data-signup>
-        <label for="email">Email address</label>
-        <div class="signup-row">
-          <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
-          <input type="hidden" name="tag" value="lofty-ambitions" />
-          <button class="btn" type="submit">Notify me</button>
-        </div>
-        <p class="fine">One launch email. Unsubscribe any time.</p>
-      </form>
-    </section>
     <footer class="footer">
       <span>© 2026 Pendium</span>
       <span>Lofty Ambitions is made by <a href="/">Pendium</a>.</span>
     </footer>
   </div>
+
+  <!-- The music button floats in the top right corner. -->
+  <button class="music-btn" type="button" data-sound-toggle aria-pressed="false">
+    <svg viewBox="0 0 10 10" aria-hidden="true"><path fill="currentColor" d="M1 3h2l2-2h1v8H5L3 7H1z" /><path
+        class="waves" fill="currentColor" d="M7 3h1v4H7zM9 2h1v6H9z" /><path class="mute" fill="currentColor"
+        d="M7 3h1v1H7zM9 3h1v1H9zM8 4h1v2H8zM7 6h1v1H7zM9 6h1v1H9z" /></svg>
+    <span data-sound-label>Play music</span>
+  </button>
+
+  <!-- The launch sign-up: a banner across the bottom of the screen. -->
+  <aside class="banner" aria-label="Launch sign-up" data-banner>
+    <!-- Buttondown username: replace "pendium" in the action URL if the
+         Buttondown account uses a different name. -->
+    <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium" method="post"
+      data-signup>
+      <label class="banner-text" for="email">Lofty Ambitions is in development. Get one email when it launches.</label>
+      <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+      <input type="hidden" name="tag" value="lofty-ambitions" />
+      <button class="btn" type="submit">Notify me</button>
+    </form>
+    <button class="banner-close" type="button" aria-label="Close the sign-up banner" data-banner-close>×</button>
+  </aside>
 
   <nav class="elevator" aria-label="Floors">
     <div class="clock" aria-hidden="true">
@@ -1520,11 +1560,6 @@
       <li><a href="#f03" data-go="f03" aria-label="Floor 3">3</a></li>
       <li><a href="#lobby" data-go="lobby" aria-label="Lobby">L</a></li>
     </ul>
-    <button class="sound-btn" type="button" data-sound-toggle aria-pressed="false" aria-label="Music">
-      <svg viewBox="0 0 10 10" aria-hidden="true"><path fill="currentColor" d="M1 3h2l2-2h1v8H5L3 7H1z" /><path
-          class="waves" fill="currentColor" d="M7 3h1v4H7zM9 2h1v6H9z" /><path class="mute" fill="currentColor"
-          d="M7 3h1v1H7zM9 3h1v1H9zM8 4h1v2H8zM7 6h1v1H7zM9 6h1v1H9z" /></svg>
-    </button>
   </nav>
 
   <script>
@@ -1625,7 +1660,7 @@
       function setSound(on) {
         soundOn = on;
         toggles.forEach((b) => b.setAttribute("aria-pressed", String(on)));
-        if (toggleLabel) toggleLabel.textContent = on ? "Turn off the music" : "Turn on the music";
+        if (toggleLabel) toggleLabel.textContent = on ? "Stop music" : "Play music";
         if (on) {
           if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
           if (ctx.state === "suspended") ctx.resume();
@@ -1999,6 +2034,25 @@
         minutes = (minutes + 1.5) % 1440;
         renderTime();
       }, 250);
+
+      /* ---------- the launch banner ---------- */
+      const banner = document.querySelector("[data-banner]");
+      const setBannerSpace = () => {
+        const h = banner.hidden ? 0 : banner.offsetHeight;
+        document.documentElement.style.setProperty("--banner-h", `${h}px`);
+      };
+      try {
+        if (localStorage.getItem("lofty-banner-closed") === "1") banner.hidden = true;
+      } catch (e) { /* storage blocked: keep the banner */ }
+      if (window.ResizeObserver) new ResizeObserver(setBannerSpace).observe(banner);
+      setBannerSpace();
+      document.querySelector("[data-banner-close]").addEventListener("click", () => {
+        banner.hidden = true;
+        setBannerSpace();
+        try {
+          localStorage.setItem("lofty-banner-closed", "1");
+        } catch (e) { /* storage blocked: closes for this visit only */ }
+      });
 
       /* ---------- sign-up ---------- */
       const signup = document.querySelector("[data-signup]");
