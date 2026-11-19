@@ -58,7 +58,6 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-      padding-bottom: var(--banner-h, 0px);
     }
 
     a {
@@ -903,7 +902,7 @@
     .elevator {
       position: fixed;
       right: 16px;
-      top: calc(50% - var(--banner-h, 0px) / 2);
+      top: 50%;
       transform: translateY(-50%);
       z-index: 10;
       padding: 10px;
@@ -1040,59 +1039,67 @@
       display: inline;
     }
 
-    /* ---------- the launch banner across the bottom ---------- */
+    /* ---------- the lobby sign and the sign-up letter ---------- */
 
-    .banner {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 16px;
-      background: rgba(23, 18, 29, 0.96);
-      border-top: 3px solid var(--gold);
-      box-shadow: 0 -6px 0 rgba(0, 0, 0, 0.25);
+    .letter-sign {
+      top: 14%;
+      left: 64%;
+      font-size: clamp(12px, 1.35vw, 18px);
+      padding: 6px 11px;
+      animation: nudge 4s ease-in-out infinite;
     }
 
-    .signup {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
+    .letter-sign svg {
+      width: 1.1em;
+      height: 0.9em;
+      shape-rendering: crispEdges;
     }
 
-    .banner-text {
-      font-family: var(--pixel);
-      font-weight: 500;
-      font-size: 16px;
-      line-height: 1.3;
+    /* A small hop every few seconds, so the last thing to tap gets noticed. */
+    @keyframes nudge {
+
+      0%,
+      86%,
+      100% {
+        transform: translateY(0);
+      }
+
+      91% {
+        transform: translateY(-5px);
+      }
     }
 
-    .signup input[type="email"] {
-      width: 260px;
-      font: inherit;
-      font-size: 16px;
+    .letter {
+      width: min(460px, calc(100vw - 32px));
+      padding: 28px 28px 26px;
       color: var(--ink);
-      background: #fffaf0;
-      border: 2px solid var(--ink);
-      border-radius: 0;
-      padding: 7px 10px;
+      background: var(--parchment);
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--ink);
     }
 
-    .signup .btn {
-      font-size: 16px;
-      padding: 8px 14px;
-      border-width: 2px;
-      box-shadow: 3px 3px 0 #000;
+    .letter::backdrop {
+      background: rgba(10, 14, 36, 0.7);
     }
 
-    .banner-close {
-      flex: none;
+    .letter h2 {
+      font-family: var(--pixel);
+      font-weight: 700;
+      font-size: 32px;
+      line-height: 1.1;
+      margin: 0 0 10px;
+    }
+
+    .letter p {
+      margin: 0 0 20px;
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    .letter-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
       width: 32px;
       height: 32px;
       display: grid;
@@ -1100,14 +1107,45 @@
       font-family: var(--pixel);
       font-size: 22px;
       line-height: 1;
-      color: var(--parchment);
+      color: var(--ink);
       background: transparent;
-      border: 2px solid rgba(243, 232, 207, 0.3);
+      border: 2px solid rgba(43, 36, 51, 0.3);
       cursor: pointer;
     }
 
-    .banner-close:hover {
-      border-color: var(--parchment);
+    .letter-close:hover {
+      border-color: var(--ink);
+    }
+
+    .signup label {
+      display: block;
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .signup-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .signup input[type="email"] {
+      flex: 1;
+      min-width: 0;
+      font: inherit;
+      font-size: 16px;
+      color: var(--ink);
+      background: #fffaf0;
+      border: 2px solid var(--ink);
+      border-radius: 0;
+      padding: 9px 11px;
+    }
+
+    .signup .btn {
+      font-size: 17px;
+      padding: 10px 14px;
+      border-width: 2px;
+      box-shadow: 3px 3px 0 var(--ink);
     }
 
     /* ---------- layout breakpoints ---------- */
@@ -1130,7 +1168,7 @@
 
       .elevator {
         top: auto;
-        bottom: calc(var(--banner-h, 0px) + 10px);
+        bottom: 12px;
         right: 12px;
         transform: none;
         flex-direction: row;
@@ -1159,27 +1197,14 @@
         margin-top: 36px;
       }
 
-      .banner {
-        padding: 8px 10px;
-        gap: 8px;
+      body {
+        padding-bottom: 76px;
       }
 
-      .banner-text {
-        flex-basis: 100%;
-        font-size: 14px;
+      /* The lobby is narrower here; keep the sign clear of the shaft. */
+      .letter-sign {
+        left: 28%;
       }
-
-      .signup {
-        justify-content: flex-start;
-        gap: 8px;
-      }
-
-      .signup input[type="email"] {
-        flex: 1;
-        width: auto;
-        min-width: 0;
-      }
-
     }
 
     @media (max-width: 520px) {
@@ -1216,6 +1241,7 @@
       .is-loose .creature,
       .is-loose .creature.flies,
       .mishap-sign,
+      .letter-sign,
       .is-lit .lamps {
         animation: none !important;
       }
@@ -1435,12 +1461,18 @@
       </section>
 
       <section class="floor lobby" id="lobby" data-label="L" data-track="going-up" aria-label="Lobby">
+        <span class="callout" aria-hidden="true">Get a letter when the doors open</span>
         <div class="scene" data-rider data-lobby>
           <span class="art" style="--sprite:url(assets/sprites/lobby.png)"></span>
           <div class="part part--shaft"></div>
           <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian3.png);--dur:18s;--delay:-7s"></span>
           <span class="sprite person stroll face-left" style="--src:url(assets/sprites/walk-civilian1.png);--dur:22s;--delay:-2s"></span>
           <span class="sprite person stroll" style="--src:url(assets/sprites/walk-chef.png);--dur:27s;--delay:-19s"></span>
+          <button class="sign letter-sign" type="button" data-open-letter aria-haspopup="dialog">
+            <svg viewBox="0 0 10 8" aria-hidden="true"><path fill="currentColor"
+                d="M0 0h10v8H0zM1 1v1l4 3 4-3V1L5 4z" /></svg>
+            Get launch news
+          </button>
         </div>
       </section>
 
@@ -1456,19 +1488,23 @@
     <span data-sound-label>Play music</span>
   </button>
 
-  <!-- The launch sign-up: a banner across the bottom of the screen. -->
-  <aside class="banner" aria-label="Launch sign-up" data-banner>
+  <!-- The launch sign-up: a letter that opens from the lobby sign. -->
+  <dialog class="letter" aria-labelledby="letter-title" data-letter>
+    <button class="letter-close" type="button" aria-label="Close" data-close-letter>×</button>
+    <h2 id="letter-title">Doors open soon</h2>
+    <p>Lofty Ambitions is in development. Leave your email and we'll send one letter when it launches.</p>
     <!-- Buttondown username: replace "pendium" in the action URL if the
          Buttondown account uses a different name. -->
     <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium" method="post"
       data-signup>
-      <label class="banner-text" for="email">Lofty Ambitions is in development. Get one email when it launches.</label>
-      <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
-      <input type="hidden" name="tag" value="lofty-ambitions" />
-      <button class="btn" type="submit">Notify me</button>
+      <label for="email">Email address</label>
+      <div class="signup-row">
+        <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+        <input type="hidden" name="tag" value="lofty-ambitions" />
+        <button class="btn" type="submit">Notify me</button>
+      </div>
     </form>
-    <button class="banner-close" type="button" aria-label="Close the sign-up banner" data-banner-close>×</button>
-  </aside>
+  </dialog>
 
   <nav class="elevator" aria-label="Floors">
     <div class="clock" aria-hidden="true">
@@ -1972,23 +2008,26 @@
         renderTime();
       }, 250);
 
-      /* ---------- the launch banner ---------- */
-      const banner = document.querySelector("[data-banner]");
-      const setBannerSpace = () => {
-        const h = banner.hidden ? 0 : banner.offsetHeight;
-        document.documentElement.style.setProperty("--banner-h", `${h}px`);
-      };
-      try {
-        if (localStorage.getItem("lofty-banner-closed") === "1") banner.hidden = true;
-      } catch (e) { /* storage blocked: keep the banner */ }
-      if (window.ResizeObserver) new ResizeObserver(setBannerSpace).observe(banner);
-      setBannerSpace();
-      document.querySelector("[data-banner-close]").addEventListener("click", () => {
-        banner.hidden = true;
-        setBannerSpace();
-        try {
-          localStorage.setItem("lofty-banner-closed", "1");
-        } catch (e) { /* storage blocked: closes for this visit only */ }
+      /* ---------- the lobby sign opens the sign-up letter ---------- */
+      const letter = document.querySelector("[data-letter]");
+      const openLetter = document.querySelector("[data-open-letter]");
+      openLetter.addEventListener("click", () => {
+        blip("fx-pop", 0.5);
+        if (typeof letter.showModal === "function") {
+          letter.showModal();
+          letter.querySelector("input[type=email]").focus();
+        } else {
+          letter.setAttribute("open", "");
+        }
+      });
+      document.querySelector("[data-close-letter]").addEventListener("click", () => letter.close());
+      // A click on the dimmed backdrop, outside the letter, closes it.
+      letter.addEventListener("click", (event) => {
+        if (event.target !== letter) return;
+        const r = letter.getBoundingClientRect();
+        const inside = event.clientX >= r.left && event.clientX <= r.right &&
+          event.clientY >= r.top && event.clientY <= r.bottom;
+        if (!inside) letter.close();
       });
 
       /* ---------- sign-up ---------- */
