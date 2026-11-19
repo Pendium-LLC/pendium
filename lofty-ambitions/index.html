@@ -881,7 +881,7 @@
       }
     }
 
-    /* ---------- the lobby and the street ---------- */
+    /* ---------- the lobby ---------- */
 
     .lobby .scene {
       aspect-ratio: var(--units) / 96;
@@ -896,34 +896,6 @@
       width: calc(28 / var(--units) * 100%);
       height: calc(46 / 96 * 100%);
       bottom: calc(6 / 96 * 100%);
-    }
-
-    /* The street: a dark full-width band so the sign-up reads over any sky. */
-    .street {
-      width: var(--tower-w);
-      margin: 0 auto;
-      background: #0b1029;
-      box-shadow: 0 0 0 100vmax #0b1029;
-      clip-path: inset(0 -100vmax -100vmax);
-    }
-
-    .footer {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 10px 24px;
-      padding: 24px 0 60px;
-      border-top: 1px solid rgba(243, 232, 207, 0.15);
-      font-size: 15px;
-      opacity: 0.85;
-    }
-
-    .footer a {
-      text-decoration: none;
-    }
-
-    .footer a:hover {
-      text-decoration: underline;
     }
 
     /* ---------- the elevator panel ---------- */
@@ -1208,9 +1180,6 @@
         min-width: 0;
       }
 
-      .footer {
-        padding-bottom: 96px;
-      }
     }
 
     @media (max-width: 520px) {
@@ -1477,13 +1446,6 @@
       <span class="cab" aria-hidden="true"></span>
     </div>
   </main>
-
-  <div class="street" id="street">
-    <footer class="footer">
-      <span>© 2026 Pendium</span>
-      <span>Lofty Ambitions is made by <a href="/">Pendium</a>.</span>
-    </footer>
-  </div>
 
   <!-- The music button floats in the top right corner. -->
   <button class="music-btn" type="button" data-sound-toggle aria-pressed="false">
@@ -1777,7 +1739,6 @@
 
       /* ---------- the elevator: the cab, its riders and the panel ---------- */
       const roof = document.getElementById("roof");
-      const street = document.getElementById("street");
       const floorsEl = document.querySelector(".floors");
       const floors = [...document.querySelectorAll(".floor")];
       const stops = [roof, ...floors];
@@ -1869,7 +1830,6 @@
 
       function nearestStop() {
         const mid = window.innerHeight / 2;
-        if (street.getBoundingClientRect().top < mid) return floors[floors.length - 1];
         let best = stops[0];
         let bestDist = Infinity;
         stops.forEach((s) => {
