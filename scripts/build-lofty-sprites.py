@@ -7,8 +7,7 @@ Writes PNGs to lofty-ambitions/assets/sprites/:
 - room-<name>.png: one row per state, in the order given in ROOMS.
 - lobby.png: the lobby.
 - walk-<person>.png: a four-frame walk cycle in equal cells, feet on the bottom edge.
-- act-repairer.png: the repairer's four work frames.
-- meatball.png: the two frames of the pizza parlor mishap.
+- mishap-<creature>.png: the two frames of each room mishap.
 - lift-cab.png, lift-doors.png: the elevator, open and closed.
 """
 
@@ -45,18 +44,19 @@ ROOMS = {
     "apartment2": ["rebuilding", "open"],
     "apartment3": ["rebuilding", "open"],
     "ramen": ["closed", "open"],
-    "pizza": ["open"],
-    # Rooms that fill out the rest of the tower.
+    # Homes stay open all night.
     "luxuryApartment": ["open"],
-    "bookshop": ["open"],
-    "coworking": ["open"],
-    "toyShop": ["open"],
-    "laundromat": ["open"],
-    "garden": ["open"],
-    "petShop": ["open"],
-    "chinaShop": ["open"],
-    "daycare": ["open"],
-    "scienceLab": ["open"],
+    # Shops: open by day, closed at night.
+    "pizza": ["open", "closed"],
+    "bookshop": ["open", "closed"],
+    "coworking": ["open", "closed"],
+    "toyShop": ["open", "closed"],
+    "laundromat": ["open", "closed"],
+    "garden": ["open", "closed"],
+    "petShop": ["open", "closed"],
+    "chinaShop": ["open", "closed"],
+    "daycare": ["open", "closed"],
+    "scienceLab": ["open", "closed"],
 }
 for room, states in ROOMS.items():
     first, _ = crop(f"room.{room}.{states[0]}")
@@ -84,10 +84,12 @@ def strip(names, cell_w, cell_h, out):
     print(out, sheet.size)
 
 
-for person in ["civilian0", "civilian1", "civilian2", "civilian3", "chef", "repairer"]:
+for person in ["civilian0", "civilian1", "civilian2", "civilian3", "chef", "security"]:
     strip([f"person.{person}.walk{i}" for i in range(4)], 28, 46, f"walk-{person}.png")
-strip([f"person.repairer.act{i}" for i in range(4)], 28, 46, "act-repairer.png")
-strip(["incident.meatball.0", "incident.meatball.1"], 40, 28, "meatball.png")
+
+# Mishap creatures: two frames each. The game sends its security guard to every mishap.
+for creature in ["meatball", "duck", "puppy", "robot", "slime", "bubble"]:
+    strip([f"incident.{creature}.0", f"incident.{creature}.1"], 40, 28, f"mishap-{creature}.png")
 
 for part in ["cab", "doors"]:
     image, _ = crop(f"lift.gatsby.standard.{part}")
