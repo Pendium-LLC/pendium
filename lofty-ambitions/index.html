@@ -32,7 +32,6 @@
       --ink: #2b2433;
       --ink-deep: #17121d;
       --parchment: #f3e8cf;
-      --marble: #efe6d2;
       --gold: #e0b35a;
       --gold-hi: #f4cd78;
       --coral: #ec6a54;
@@ -41,8 +40,9 @@
       --pixel: "Pixelify Sans", ui-monospace, monospace;
       --sans: "Nunito", system-ui, sans-serif;
       --tower-w: min(1120px, 100vw - 32px);
-      /* One room sprite unit as a share of a 384-unit-wide room. */
-      --u: calc(100% / 384);
+      /* The tower is 704 sprite units wide: a 384-unit room, a 64-unit shaft, a 256-unit room. */
+      --units: 704;
+      --gutter: 40px;
     }
 
     * {
@@ -77,6 +77,15 @@
 
     [hidden] {
       display: none !important;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
 
     /* ---------- the city behind the tower ---------- */
@@ -148,7 +157,7 @@
 
     .roof {
       position: relative;
-      min-height: 100svh;
+      min-height: 92svh;
       display: flex;
       flex-direction: column;
       padding: 0 16px;
@@ -198,7 +207,7 @@
     .roof-body {
       width: var(--tower-w);
       margin: auto auto 0;
-      padding: 6vh 0 0;
+      padding: 4vh 0 0;
     }
 
     .title {
@@ -235,24 +244,17 @@
       gap: 16px;
     }
 
-    .hint-line {
-      font-family: var(--pixel);
-      font-size: 16px;
-      margin: 26px 0 0;
-      opacity: 0.85;
-    }
-
     .parapet {
       width: var(--tower-w);
-      height: 34px;
-      margin: 8vh auto 0;
+      height: 30px;
+      margin: 9vh auto 0;
       background: repeating-linear-gradient(90deg, var(--concrete) 0 46px, var(--concrete-lo) 46px 48px);
       border: 3px solid var(--ink);
       border-bottom: 0;
       box-shadow: inset 0 6px 0 rgba(255, 255, 255, 0.12);
     }
 
-    /* ---------- the tower ---------- */
+    /* ---------- the tower: floors stacked like the game's cross-section ---------- */
 
     .tower {
       width: var(--tower-w);
@@ -260,88 +262,65 @@
       border-left: 10px solid var(--concrete);
       border-right: 10px solid var(--concrete);
       outline: 3px solid var(--ink);
-      background: var(--ink);
-    }
-
-    .floor {
-      --wall: #1d2440;
-      position: relative;
-      background:
-        radial-gradient(80% 60% at 50% 100%, rgba(255, 214, 150, 0.08), transparent 70%),
-        var(--wall);
-      overflow: hidden;
-      padding-bottom: 56px;
-    }
-
-    .slab {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      min-height: 46px;
-      padding: 6px 16px;
-      background: var(--concrete);
-      border-top: 3px solid var(--ink);
-      border-bottom: 3px solid var(--ink);
-      box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.12);
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .plate {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .plate b {
-      font-family: var(--pixel);
-      font-weight: 700;
-      font-size: 20px;
-      color: var(--ink);
-      background: var(--gold);
-      border: 2px solid var(--ink);
-      padding: 1px 9px;
-    }
-
-    .now-playing {
-      font-family: var(--pixel);
-      font-weight: 500;
-      color: var(--gold-hi);
-      opacity: 0;
-      transition: opacity 400ms ease;
-      white-space: nowrap;
-    }
-
-    .floor.is-playing .now-playing {
-      opacity: 1;
-    }
-
-    .floor-title {
-      font-family: var(--pixel);
-      font-weight: 700;
-      font-size: clamp(30px, 3.6vw, 46px);
-      line-height: 1.1;
-      margin: 30px 28px 18px;
-      color: var(--parchment);
-      text-shadow: 3px 3px 0 var(--ink-deep);
-    }
-
-    /* ---------- the room: the hero of every floor ---------- */
-
-    .room-window {
-      margin: 0 28px;
-      border: 4px solid var(--ink-deep);
-      box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.4);
       background: var(--ink-deep);
     }
 
-    .room {
+    .floors {
       position: relative;
-      width: 100%;
-      aspect-ratio: 384 / 88;
+    }
+
+    .floor {
+      position: relative;
+      display: grid;
+      grid-template-columns: var(--gutter) minmax(0, 1fr);
+      border-bottom: 3px solid var(--ink-deep);
+    }
+
+    /* Floor numbers down the left edge, as in the game. */
+    .num {
+      display: grid;
+      place-items: center;
+      background: var(--concrete-lo);
+      border-right: 3px solid var(--ink-deep);
+      font-family: var(--pixel);
+      font-weight: 700;
+      font-size: 15px;
+      color: rgba(243, 232, 207, 0.7);
+    }
+
+    .floor.is-current .num {
+      color: var(--gold);
+    }
+
+    .scene {
+      position: relative;
+      aspect-ratio: var(--units) / 88;
       overflow: hidden;
       image-rendering: pixelated;
+    }
+
+    .part {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+    }
+
+    .part--left {
+      left: 0;
+      width: calc(384 / var(--units) * 100%);
+    }
+
+    .part--shaft {
+      left: calc(384 / var(--units) * 100%);
+      width: calc(64 / var(--units) * 100%);
+      background:
+        linear-gradient(90deg, #120e17 0 8%, #2a2431 8% 12%, transparent 12% 88%, #2a2431 88% 92%, #120e17 92%),
+        repeating-linear-gradient(180deg, #1a1520 0 6px, #1d1724 6px 12px);
+    }
+
+    .part--right {
+      left: calc(448 / var(--units) * 100%);
+      width: calc(256 / var(--units) * 100%);
     }
 
     .art {
@@ -354,10 +333,15 @@
       image-rendering: pixelated;
     }
 
-    /* People and things move in sprite units, so they keep their size at any width. */
+    .room {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* People and things are sized in sprite units of a 384-unit room. */
     .sprite {
       position: absolute;
-      bottom: calc(var(--u) * 0);
       background-image: var(--src);
       background-repeat: no-repeat;
       image-rendering: pixelated;
@@ -371,12 +355,16 @@
       background-size: 400% 100%;
     }
 
-    .person.is-walking {
-      animation: walk-frames 0.6s steps(4) infinite;
+    .person.stroll {
+      animation:
+        walk-frames 0.6s steps(4) infinite,
+        stroll var(--dur, 16s) linear infinite;
+      animation-delay: 0s, var(--delay, 0s);
     }
 
-    .person.face-left {
+    .person.stroll.face-left {
       transform: scaleX(-1);
+      animation-direction: normal, reverse;
     }
 
     @keyframes walk-frames {
@@ -385,41 +373,91 @@
       }
     }
 
-    /* The hint strip: the game's own dark bar that says what the next tap does. */
-    .hint {
-      margin: 0 28px;
-      display: flex;
+    @keyframes stroll {
+      from {
+        left: -8%;
+      }
+
+      to {
+        left: 100%;
+      }
+    }
+
+    /* A pixel sign inside a room: the only UI on a floor. */
+    .sign {
+      position: absolute;
+      z-index: 3;
+      display: inline-flex;
       align-items: center;
-      gap: 10px 18px;
-      flex-wrap: wrap;
-      min-height: 62px;
-      padding: 12px 16px;
-      background: var(--ink-deep);
-      border: 4px solid var(--ink-deep);
-      border-top: 0;
-      box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.4);
+      gap: 6px;
       font-family: var(--pixel);
-      font-size: 18px;
-      line-height: 1.3;
-    }
-
-    .hint .where {
-      color: var(--gold);
+      font-weight: 700;
+      font-size: clamp(11px, 1.25vw, 17px);
+      line-height: 1.1;
+      color: var(--ink);
+      background: var(--gold);
+      border: 2px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      padding: 5px 10px;
       white-space: nowrap;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease;
     }
 
-    .hint .what {
-      flex: 1 1 260px;
+    .sign:hover {
+      background: var(--gold-hi);
     }
 
-    .hint .btn {
-      font-size: 17px;
-      padding: 9px 14px;
-      box-shadow: 3px 3px 0 #000;
-      border-color: #000;
+    .sign:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--ink);
     }
 
-    /* ---------- 12F: build homes ---------- */
+    /* Labels in the left margin point at the floors you can play with (wide screens only). */
+    .callout {
+      display: none;
+      position: absolute;
+      right: calc(100% + 26px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: max-content;
+      max-width: 150px;
+      font-family: var(--pixel);
+      font-size: 16px;
+      line-height: 1.25;
+      text-align: right;
+      color: var(--parchment);
+      text-shadow: 0 2px 0 var(--ink);
+    }
+
+    .callout::after {
+      content: "→";
+      display: block;
+      color: var(--gold);
+    }
+
+    @media (min-width: 1300px) {
+      .callout {
+        display: block;
+      }
+    }
+
+    /* ---------- the elevator cab rides the shaft ---------- */
+
+    .cab {
+      position: absolute;
+      z-index: 4;
+      background: url("assets/sprites/lift-cab.png") center / 100% 100% no-repeat;
+      image-rendering: pixelated;
+      transition: top 900ms cubic-bezier(0.45, 0, 0.25, 1);
+      pointer-events: none;
+    }
+
+    .cab.is-moving {
+      background-image: url("assets/sprites/lift-doors.png");
+    }
+
+    /* ---------- 8F: build homes ---------- */
 
     .lot {
       position: absolute;
@@ -436,7 +474,7 @@
     }
 
     .lot:focus-visible {
-      outline-offset: -6px;
+      outline-offset: -4px;
     }
 
     .lot .art {
@@ -444,16 +482,14 @@
       opacity: 0;
     }
 
-    /* An empty lot: bare concrete and a dashed outline. */
     .lot::before {
       content: "";
       position: absolute;
-      inset: calc(6 / 88 * 100%) 4% calc(5 / 88 * 100%);
-      border: 3px dashed rgba(243, 232, 207, 0.35);
+      inset: calc(5 / 88 * 100%) 4% calc(5 / 88 * 100%);
+      border: 2px dashed rgba(243, 232, 207, 0.35);
       background:
         repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 6px, transparent 6px 12px),
-        rgba(20, 16, 26, 0.6);
-      transition: opacity 200ms ease;
+        rgba(20, 16, 26, 0.65);
     }
 
     .lot::after {
@@ -466,38 +502,22 @@
       background: #57506a;
     }
 
-    .lot-sign {
-      position: absolute;
+    .lot .sign {
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      z-index: 2;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--pixel);
-      font-weight: 700;
-      font-size: clamp(15px, 1.8vw, 22px);
-      color: var(--ink);
-      background: var(--gold);
-      border: 3px solid var(--ink);
-      box-shadow: 4px 4px 0 var(--ink);
-      padding: 8px 14px;
-      white-space: nowrap;
-      transition: transform 120ms ease, background 120ms ease;
+      pointer-events: none;
     }
 
-    .lot:hover .lot-sign {
+    .lot:hover .sign {
       background: var(--gold-hi);
-      transform: translate(-50%, -54%);
     }
 
     .lot[data-state="building"]::before,
     .lot[data-state="built"]::before,
-    .lot[data-state="building"] .lot-sign,
-    .lot[data-state="built"] .lot-sign {
+    .lot[data-state="building"] .sign,
+    .lot[data-state="built"] .sign {
       opacity: 0;
-      pointer-events: none;
     }
 
     .lot[data-state="building"] .art {
@@ -559,7 +579,6 @@
       }
     }
 
-    /* A tenant walks inside each finished home. */
     .lot .person {
       width: calc(28 / 128 * 100%);
       opacity: 0;
@@ -596,7 +615,7 @@
       }
     }
 
-    /* ---------- 8F: the ramen bar opens for the night ---------- */
+    /* ---------- 6F: the ramen bar opens for the night ---------- */
 
     .room-button {
       position: absolute;
@@ -609,7 +628,7 @@
     }
 
     .room-button:focus-visible {
-      outline-offset: -6px;
+      outline-offset: -4px;
     }
 
     .night {
@@ -634,37 +653,23 @@
       transition: opacity 500ms ease;
     }
 
-    .ramen-sign {
-      position: absolute;
-      top: 24%;
+    .room-button .sign {
       left: 50%;
-      transform: translateX(-50%) rotate(-3deg);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-family: var(--pixel);
-      font-weight: 700;
-      font-size: clamp(16px, 2vw, 24px);
-      color: var(--ink);
+      top: 30%;
+      transform: translateX(-50%);
       background: var(--parchment);
-      border: 3px solid var(--ink);
-      box-shadow: 4px 4px 0 var(--ink);
-      padding: 8px 16px;
-      transition: transform 160ms ease, opacity 300ms ease;
       pointer-events: none;
-      white-space: nowrap;
     }
 
-    .room-button:hover .ramen-sign {
-      transform: translateX(-50%) rotate(0deg) scale(1.04);
+    .room-button:hover .sign {
+      background: #fff6e0;
     }
 
     .switch {
       display: inline-block;
-      width: 16px;
-      height: 24px;
+      width: 0.7em;
+      height: 1em;
       background: var(--ink);
-      border: 2px solid var(--ink);
       position: relative;
     }
 
@@ -674,7 +679,7 @@
       left: 2px;
       right: 2px;
       bottom: 2px;
-      height: 9px;
+      height: 40%;
       background: var(--gold);
     }
 
@@ -698,7 +703,7 @@
       }
     }
 
-    .is-lit .ramen-sign {
+    .is-lit .room-button .sign {
       opacity: 0;
     }
 
@@ -711,32 +716,17 @@
       opacity: 1;
     }
 
-    .ramen .person.stroll {
-      animation: walk-frames 0.6s steps(4) infinite, stroll var(--dur, 12s) linear infinite;
-      animation-delay: 0s, var(--delay, 0s);
-      animation-play-state: paused;
-    }
-
-    .is-lit .ramen .person.stroll {
-      animation-play-state: running;
-    }
-
-    @keyframes stroll {
-      from {
-        left: -8%;
-      }
-
-      to {
-        left: 100%;
-      }
-    }
-
     .ramen .person.cook {
       left: 52%;
       animation: walk-frames 0.6s steps(4) infinite, cook 5s ease-in-out infinite;
+    }
+
+    .ramen .person.stroll,
+    .ramen .person.cook {
       animation-play-state: paused;
     }
 
+    .is-lit .ramen .person.stroll,
     .is-lit .ramen .person.cook {
       animation-play-state: running;
     }
@@ -811,30 +801,14 @@
       }
     }
 
-    .alert {
-      position: absolute;
-      top: 6%;
-      right: 2%;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--pixel);
-      font-weight: 700;
-      font-size: clamp(13px, 1.5vw, 18px);
-      color: #fff;
-      background: var(--coral);
-      border: 3px solid var(--ink);
-      box-shadow: 3px 3px 0 var(--ink);
-      padding: 5px 10px;
-      opacity: 0;
-      transform: translateY(-8px);
-      transition: opacity 200ms ease, transform 200ms ease;
-      pointer-events: none;
+    .pizza .sign {
+      top: 8%;
+      left: 3%;
     }
 
-    .meatballs-loose .alert {
-      opacity: 1;
-      transform: none;
+    .meatballs-loose .sign[data-call-crew] {
+      background: var(--coral);
+      color: #fff;
       animation: blink 1s steps(2) infinite;
     }
 
@@ -870,42 +844,60 @@
       animation: walk-frames 0.6s steps(4) infinite;
     }
 
-    /* ---------- the lobby ---------- */
+    /* ---------- the lobby and the street ---------- */
 
-    .lobby {
-      --wall: var(--marble);
-      color: var(--ink);
+    .lobby .scene {
+      aspect-ratio: var(--units) / 96;
     }
 
-    .lobby .floor-title {
-      color: var(--ink);
-      text-shadow: 3px 3px 0 var(--gold);
-    }
-
-    .lobby .room {
-      aspect-ratio: 1024 / 96;
+    .lobby .art {
+      background-size: cover;
+      background-position: center bottom;
     }
 
     .lobby .person {
-      width: calc(28 / 1024 * 100%);
+      width: calc(28 / var(--units) * 100%);
       height: calc(46 / 96 * 100%);
       bottom: calc(6 / 96 * 100%);
-      animation: walk-frames 0.6s steps(4) infinite, stroll var(--dur, 20s) linear infinite;
-      animation-delay: 0s, var(--delay, 0s);
     }
 
-    .lobby-body {
+    /* The street: a dark full-width band so the sign-up reads over the city. */
+    .street {
+      width: var(--tower-w);
+      margin: 0 auto;
+      background: #0b1029;
+      box-shadow: 0 0 0 100vmax #0b1029;
+      clip-path: inset(0 -100vmax -100vmax);
+    }
+
+    .sidewalk {
+      height: 18px;
+      margin: 0 -40px;
+      background: repeating-linear-gradient(90deg, #5c6078 0 58px, #4b4f66 58px 60px);
+      border-top: 3px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .launch {
       display: grid;
       grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
       gap: 32px;
       align-items: end;
-      margin: 36px 28px 0;
+      padding: 72px 0 40px;
     }
 
-    .lobby-body p {
+    .launch h2 {
+      font-family: var(--pixel);
+      font-weight: 700;
+      font-size: clamp(30px, 3.6vw, 44px);
+      line-height: 1.1;
+      margin: 0 0 12px;
+      text-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .launch p {
       margin: 0;
       max-width: 36ch;
-      font-size: 19px;
     }
 
     .signup label {
@@ -937,25 +929,22 @@
       opacity: 0.8;
     }
 
-    .basement {
-      width: var(--tower-w);
-      margin: 0 auto;
-      padding: 22px 26px 60px;
-      background: var(--concrete-lo);
-      border: 3px solid var(--ink);
-      border-top: 0;
+    .footer {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       gap: 10px 24px;
+      padding: 24px 0 60px;
+      border-top: 1px solid rgba(243, 232, 207, 0.15);
       font-size: 15px;
+      opacity: 0.85;
     }
 
-    .basement a {
+    .footer a {
       text-decoration: none;
     }
 
-    .basement a:hover {
+    .footer a:hover {
       text-decoration: underline;
     }
 
@@ -967,15 +956,14 @@
       top: 50%;
       transform: translateY(-50%);
       z-index: 10;
-      width: 74px;
-      padding: 10px 8px;
+      padding: 10px;
       background: var(--ink);
       border: 3px solid var(--ink-deep);
       box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .display {
@@ -993,13 +981,13 @@
 
     .display .arrow {
       display: block;
-      font-size: 14px;
-      height: 14px;
+      font-size: 13px;
+      height: 13px;
     }
 
-    .display .num {
+    .display .now {
       display: block;
-      font-size: 30px;
+      font-size: 28px;
       font-variant-numeric: tabular-nums;
     }
 
@@ -1008,23 +996,28 @@
       margin: 0;
       padding: 0;
       display: grid;
+      grid-template-columns: repeat(2, 36px);
       gap: 6px;
     }
 
     .floor-buttons a {
       display: grid;
       place-items: center;
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: #3b3343;
       border: 2px solid var(--ink-deep);
       box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.15);
       font-family: var(--pixel);
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14px;
       text-decoration: none;
       color: var(--parchment);
+    }
+
+    .floor-buttons a:hover {
+      background: #4a4153;
     }
 
     .floor-buttons a[aria-current="true"] {
@@ -1036,8 +1029,8 @@
     .sound-btn {
       display: grid;
       place-items: center;
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       background: var(--parchment);
       border: 2px solid var(--ink-deep);
       cursor: pointer;
@@ -1050,8 +1043,8 @@
     }
 
     .sound-btn svg {
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       shape-rendering: crispEdges;
     }
 
@@ -1071,13 +1064,27 @@
 
     @media (min-width: 900px) {
       :root {
-        --tower-w: min(1120px, 100vw - 220px);
+        --tower-w: min(1120px, 100vw - 240px);
       }
     }
 
     @media (max-width: 899px) {
+      :root {
+        /* On a phone the tower shows the left room and the shaft. */
+        --units: 448;
+        --gutter: 30px;
+      }
+
       body {
         padding-bottom: 76px;
+      }
+
+      .part--right {
+        display: none;
+      }
+
+      .num {
+        font-size: 12px;
       }
 
       .elevator {
@@ -1085,7 +1092,6 @@
         bottom: 12px;
         right: 12px;
         transform: none;
-        width: auto;
         flex-direction: row;
         padding: 6px;
       }
@@ -1098,33 +1104,14 @@
         width: 58px;
       }
 
-      .floor-title {
-        margin: 24px 14px 14px;
+      .sign {
+        padding: 3px 7px;
+        box-shadow: 2px 2px 0 var(--ink);
       }
 
-      /* On a phone the room keeps a readable size and scrolls sideways. */
-      .room-window {
-        margin: 0 12px;
-        overflow-x: auto;
-        scrollbar-width: thin;
-      }
-
-      .room-window .room {
-        min-width: 620px;
-      }
-
-      .lobby .room-window .room {
-        min-width: 1100px;
-      }
-
-      .hint {
-        margin: 0 12px;
-        font-size: 16px;
-      }
-
-      .lobby-body {
+      .launch {
         grid-template-columns: 1fr;
-        margin: 28px 18px 0;
+        padding-top: 56px;
       }
     }
 
@@ -1141,27 +1128,25 @@
       .signup-row {
         flex-direction: column;
       }
-
-      .now-playing {
-        display: none;
-      }
     }
 
     @media (prefers-reduced-motion: reduce) {
 
       .person,
+      .person.stroll,
       .lot[data-state] .art,
       .lot[data-state] .dust,
       .lot[data-state="built"] .person,
       .meatball,
       .meatballs-loose .meatball,
-      .alert,
+      .meatballs-loose .sign,
       .is-lit .lamps {
         animation: none !important;
       }
 
       .crew,
-      .meatball {
+      .meatball,
+      .cab {
         transition: none !important;
       }
 
@@ -1175,7 +1160,7 @@
 <body>
   <div class="sky" aria-hidden="true"></div>
 
-  <header class="roof" id="roof" data-floor="R" data-track="lofty-ambitions">
+  <header class="roof" id="roof" data-label="R" data-track="lofty-ambitions">
     <nav class="roof-nav" aria-label="Site">
       <a class="brand" href="./">
         <img src="assets/icon.png" alt="" width="36" height="36" />
@@ -1197,156 +1182,224 @@
               class="waves" fill="currentColor" d="M7 3h1v4H7zM9 2h1v6H9z" /></svg>
           <span data-sound-label>Turn on the music</span>
         </button>
-        <a class="btn btn--quiet" href="#lobby">Notify me at launch</a>
+        <a class="btn btn--quiet" href="#street">Notify me at launch</a>
       </div>
-      <p class="hint-line">Scroll down and try each floor.</p>
     </div>
     <div class="parapet" aria-hidden="true"></div>
   </header>
 
-  <main class="tower">
-    <!-- 12F: build homes -->
-    <section class="floor" id="f12" data-floor="12" data-track="ninety-floors-up" aria-labelledby="f12-title"
-      style="--wall:#2a2342">
-      <div class="slab">
-        <span class="plate"><b>12F</b> Homes</span>
-        <span class="now-playing">♪ Ninety Floors Up</span>
-      </div>
-      <h2 class="floor-title" id="f12-title">Build it up</h2>
-      <div class="room-window">
-        <div class="room build" data-build>
-          <button class="lot" type="button" style="left:0" data-state="empty" aria-label="Build home 1">
-            <span class="art" style="--sprite:url(assets/sprites/room-apartment.png)"></span>
-            <span class="dust"></span>
-            <span class="sprite person" style="--src:url(assets/sprites/walk-civilian1.png)"></span>
-            <span class="lot-sign">+ Build</span>
-          </button>
-          <button class="lot" type="button" style="left:calc(100% / 3)" data-state="empty"
-            aria-label="Build home 2">
-            <span class="art" style="--sprite:url(assets/sprites/room-apartment2.png)"></span>
-            <span class="dust"></span>
-            <span class="sprite person" style="--src:url(assets/sprites/walk-civilian2.png);animation-delay:0s,-2s"></span>
-            <span class="lot-sign">+ Build</span>
-          </button>
-          <button class="lot" type="button" style="left:calc(200% / 3)" data-state="empty"
-            aria-label="Build home 3">
-            <span class="art" style="--sprite:url(assets/sprites/room-apartment3.png)"></span>
-            <span class="dust"></span>
-            <span class="sprite person" style="--src:url(assets/sprites/walk-civilian3.png);animation-delay:0s,-4s"></span>
-            <span class="lot-sign">+ Build</span>
-          </button>
-        </div>
-      </div>
-      <div class="hint" role="status">
-        <span class="where">12F › Empty lots</span>
-        <span class="what" data-hint>Tap a lot to build a home.</span>
-        <button class="btn" type="button" data-build-reset hidden>Clear the lots</button>
-      </div>
-    </section>
+  <main class="tower" aria-label="A tower from Lofty Ambitions">
+    <div class="floors">
 
-    <!-- 8F: the ramen bar -->
-    <section class="floor" id="f08" data-floor="8" data-track="steam-on-the-counter" data-needs-lights
-      aria-labelledby="f08-title" style="--wall:#2a140d">
-      <div class="slab">
-        <span class="plate"><b>8F</b> Ramen bar</span>
-        <span class="now-playing">♪ Steam on the Counter</span>
-      </div>
-      <h2 class="floor-title" id="f08-title">Open late</h2>
-      <div class="room-window">
-        <div class="room ramen">
-          <span class="art" style="--sprite:url(assets/sprites/room-ramen.png);--rows:2;--row:1"></span>
-          <span class="lamps"></span>
-          <span class="sprite person cook" style="--src:url(assets/sprites/walk-chef.png)"></span>
-          <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian0.png);--dur:14s;--delay:-3s"></span>
-          <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian2.png);--dur:18s;--delay:-11s"></span>
-          <span class="night"></span>
-          <button class="room-button" type="button" aria-pressed="false" data-ramen
-            aria-label="Turn on the ramen bar lights">
-            <span class="ramen-sign"><span class="switch" aria-hidden="true"></span> Lights on</span>
-          </button>
-        </div>
-      </div>
-      <div class="hint" role="status">
-        <span class="where">8F › Ramen bar</span>
-        <span class="what" data-hint>It's late and the lights are off. Tap the ramen bar to open it.</span>
-      </div>
-    </section>
-
-    <!-- 4F: runaway meatballs -->
-    <section class="floor" id="f04" data-floor="4" data-track="stairwell-samba" aria-labelledby="f04-title"
-      style="--wall:#3a1d29">
-      <div class="slab">
-        <span class="plate"><b>4F</b> Pizza parlor</span>
-        <span class="now-playing">♪ Stairwell Samba</span>
-      </div>
-      <h2 class="floor-title" id="f04-title">Meatballs!</h2>
-      <div class="room-window">
-        <div class="room pizza" data-pizza>
-          <span class="art" style="--sprite:url(assets/sprites/room-pizza.png)"></span>
-          <span class="sprite meatball" style="--src:url(assets/sprites/meatball.png);--x:20%;--dur:3.6s;--delay:-1s"></span>
-          <span class="sprite meatball" style="--src:url(assets/sprites/meatball.png);--x:50%;--dur:4.4s;--delay:-3s"></span>
-          <span class="sprite meatball" style="--src:url(assets/sprites/meatball.png);--x:70%;--dur:3.1s;--delay:-2s"></span>
-          <span class="sprite person crew" style="--src:url(assets/sprites/walk-repairer.png)"></span>
-          <span class="alert">! Runaway meatballs</span>
-        </div>
-      </div>
-      <div class="hint" role="status">
-        <span class="where">4F › Pizza parlor</span>
-        <span class="what" data-hint>A quiet afternoon. For now.</span>
-        <button class="btn" type="button" data-call-crew hidden>Call the cleanup crew</button>
-        <button class="btn" type="button" data-loose hidden>Let them loose again</button>
-      </div>
-    </section>
-
-    <!-- Lobby -->
-    <section class="floor lobby" id="lobby" data-floor="1" data-track="going-up" aria-labelledby="lobby-title">
-      <div class="slab">
-        <span class="plate"><b>1F</b> Lobby</span>
-        <span class="now-playing">♪ Going Up</span>
-      </div>
-      <h2 class="floor-title" id="lobby-title">Doors open soon</h2>
-      <div class="room-window">
-        <div class="room">
-          <span class="art" style="--sprite:url(assets/sprites/lobby.png)"></span>
-          <span class="sprite person" style="--src:url(assets/sprites/walk-civilian3.png);--dur:18s;--delay:-7s"></span>
-          <span class="sprite person face-left" style="--src:url(assets/sprites/walk-civilian1.png);--dur:22s;--delay:-2s;animation-direction:normal,reverse"></span>
-          <span class="sprite person" style="--src:url(assets/sprites/walk-chef.png);--dur:27s;--delay:-19s"></span>
-        </div>
-      </div>
-      <div class="lobby-body">
-        <p>Lofty Ambitions is in development. Leave your email and we'll tell you when it launches.</p>
-        <!-- Buttondown username: replace "pendium" in the action URL if the
-             Buttondown account uses a different name. -->
-        <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium" method="post"
-          data-signup>
-          <label for="email">Email address</label>
-          <div class="signup-row">
-            <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email"
-              required />
-            <input type="hidden" name="tag" value="lofty-ambitions" />
-            <button class="btn" type="submit">Notify me</button>
+      <section class="floor" id="f10" data-label="10" data-track="ninety-floors-up" aria-label="Floor 10">
+        <span class="num" aria-hidden="true">10</span>
+        <div class="scene">
+          <div class="part part--left">
+            <div class="room">
+              <span class="art" style="--sprite:url(assets/sprites/room-luxuryApartment.png)"></span>
+              <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian3.png);--dur:22s;--delay:-6s"></span>
+            </div>
           </div>
-          <p class="fine">One launch email. Unsubscribe any time.</p>
-        </form>
-      </div>
-    </section>
+          <div class="part part--shaft"></div>
+          <div class="part part--right"><span class="art" style="--sprite:url(assets/sprites/room-bookshop.png)"></span></div>
+        </div>
+      </section>
+
+      <section class="floor" id="f09" data-label="9" data-track="ninety-floors-up" aria-label="Floor 9">
+        <span class="num" aria-hidden="true">9</span>
+        <div class="scene">
+          <div class="part part--left">
+            <div class="room">
+              <span class="art" style="--sprite:url(assets/sprites/room-coworking.png)"></span>
+              <span class="sprite person stroll face-left" style="--src:url(assets/sprites/walk-civilian0.png);--dur:18s;--delay:-11s"></span>
+            </div>
+          </div>
+          <div class="part part--shaft"></div>
+          <div class="part part--right"><span class="art" style="--sprite:url(assets/sprites/room-toyShop.png)"></span></div>
+        </div>
+      </section>
+
+      <!-- 8F: build homes -->
+      <section class="floor" id="f08" data-label="8" data-track="ninety-floors-up" aria-label="Floor 8, empty lots">
+        <span class="callout" aria-hidden="true">Tap a lot to build a home</span>
+        <span class="num" aria-hidden="true">8</span>
+        <div class="scene">
+          <div class="part part--left">
+            <div class="room build" data-build>
+              <button class="lot" type="button" style="left:0" data-state="empty" aria-label="Build home 1">
+                <span class="art" style="--sprite:url(assets/sprites/room-apartment.png)"></span>
+                <span class="dust"></span>
+                <span class="sprite person" style="--src:url(assets/sprites/walk-civilian1.png)"></span>
+                <span class="sign">+ Build</span>
+              </button>
+              <button class="lot" type="button" style="left:calc(100% / 3)" data-state="empty" aria-label="Build home 2">
+                <span class="art" style="--sprite:url(assets/sprites/room-apartment2.png)"></span>
+                <span class="dust"></span>
+                <span class="sprite person" style="--src:url(assets/sprites/walk-civilian2.png);animation-delay:0s,-2s"></span>
+                <span class="sign">+ Build</span>
+              </button>
+              <button class="lot" type="button" style="left:calc(200% / 3)" data-state="empty" aria-label="Build home 3">
+                <span class="art" style="--sprite:url(assets/sprites/room-apartment3.png)"></span>
+                <span class="dust"></span>
+                <span class="sprite person" style="--src:url(assets/sprites/walk-civilian3.png);animation-delay:0s,-4s"></span>
+                <span class="sign">+ Build</span>
+              </button>
+            </div>
+          </div>
+          <div class="part part--shaft"></div>
+          <div class="part part--right"><span class="art" style="--sprite:url(assets/sprites/room-laundromat.png)"></span></div>
+        </div>
+        <p class="visually-hidden" role="status" data-status></p>
+      </section>
+
+      <section class="floor" id="f07" data-label="7" data-track="ninety-floors-up" aria-label="Floor 7">
+        <span class="num" aria-hidden="true">7</span>
+        <div class="scene">
+          <div class="part part--left">
+            <div class="room">
+              <span class="art" style="--sprite:url(assets/sprites/room-garden.png)"></span>
+              <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian2.png);--dur:26s;--delay:-4s"></span>
+            </div>
+          </div>
+          <div class="part part--shaft"></div>
+          <div class="part part--right"><span class="art" style="--sprite:url(assets/sprites/room-petShop.png)"></span></div>
+        </div>
+      </section>
+
+      <!-- 6F: the ramen bar -->
+      <section class="floor" id="f06" data-label="6" data-track="steam-on-the-counter" data-track-dark="ninety-floors-up"
+        data-needs-lights aria-label="Floor 6, ramen bar">
+        <span class="callout" aria-hidden="true">Tap to open the ramen bar</span>
+        <span class="num" aria-hidden="true">6</span>
+        <div class="scene">
+          <div class="part part--left">
+            <div class="room ramen">
+              <span class="art" style="--sprite:url(assets/sprites/room-ramen.png);--rows:2;--row:0"></span>
+              <span class="lamps"></span>
+              <span class="sprite person cook" style="--src:url(assets/sprites/walk-chef.png)"></span>
+              <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian0.png);--dur:14s;--delay:-3s"></span>
+              <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian2.png);--dur:18s;--delay:-11s"></span>
+              <span class="night"></span>
+              <button class="room-button" type="button" aria-pressed="false" data-ramen
+                aria-label="Turn on the ramen bar lights">
+                <span class="sign"><span class="switch" aria-hidden="true"></span> Lights on</span>
+              </button>
+            </div>
+          </div>
+          <div class="part part--shaft"></div>
+          <div class="part part--right"><span class="art" style="--sprite:url(assets/sprites/room-chinaShop.png)"></span></div>
+        </div>
+        <p class="visually-hidden" role="status" data-status></p>
+      </section>
+
+      <section class="floor" id="f05" data-label="5" data-track="stairwell-samba" aria-label="Floor 5">
+        <span class="num" aria-hidden="true">5</span>
+        <div class="scene">
+          <div class="part part--left">
+            <div class="room">
+              <span class="art" style="--sprite:url(assets/sprites/room-daycare.png)"></span>
+              <span class="sprite person stroll face-left" style="--src:url(assets/sprites/walk-civilian1.png);--dur:20s;--delay:-9s"></span>
+            </div>
+          </div>
+          <div class="part part--shaft"></div>
+          <div class="part part--right">
+            <span class="art" style="--sprite:url(assets/sprites/room-apartment.png);--rows:2;--row:1;right:50%"></span>
+            <span class="art" style="--sprite:url(assets/sprites/room-apartment2.png);--rows:2;--row:1;left:50%"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4F: runaway meatballs -->
+      <section class="floor" id="f04" data-label="4" data-track="stairwell-samba" aria-label="Floor 4, pizza parlor">
+        <span class="callout" aria-hidden="true">Catch the runaway meatballs</span>
+        <span class="num" aria-hidden="true">4</span>
+        <div class="scene">
+          <div class="part part--left">
+            <div class="room pizza" data-pizza>
+              <span class="art" style="--sprite:url(assets/sprites/room-pizza.png)"></span>
+              <span class="sprite meatball" style="--src:url(assets/sprites/meatball.png);--x:20%;--dur:3.6s;--delay:-1s"></span>
+              <span class="sprite meatball" style="--src:url(assets/sprites/meatball.png);--x:50%;--dur:4.4s;--delay:-3s"></span>
+              <span class="sprite meatball" style="--src:url(assets/sprites/meatball.png);--x:70%;--dur:3.1s;--delay:-2s"></span>
+              <span class="sprite person crew" style="--src:url(assets/sprites/walk-repairer.png)"></span>
+              <button class="sign" type="button" data-call-crew hidden>Call the cleanup crew</button>
+              <button class="sign" type="button" data-loose hidden>Let them loose again</button>
+            </div>
+          </div>
+          <div class="part part--shaft"></div>
+          <div class="part part--right"><span class="art" style="--sprite:url(assets/sprites/room-bookshop.png)"></span></div>
+        </div>
+        <p class="visually-hidden" role="status" data-status></p>
+      </section>
+
+      <section class="floor" id="f03" data-label="3" data-track="stairwell-samba" aria-label="Floor 3">
+        <span class="num" aria-hidden="true">3</span>
+        <div class="scene">
+          <div class="part part--left">
+            <div class="room">
+              <span class="art" style="--sprite:url(assets/sprites/room-scienceLab.png)"></span>
+              <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian3.png);--dur:19s;--delay:-14s"></span>
+            </div>
+          </div>
+          <div class="part part--shaft"></div>
+          <div class="part part--right"><span class="art" style="--sprite:url(assets/sprites/room-toyShop.png)"></span></div>
+        </div>
+      </section>
+
+      <section class="floor lobby" id="lobby" data-label="L" data-track="going-up" aria-label="Lobby">
+        <span class="num" aria-hidden="true">L</span>
+        <div class="scene">
+          <span class="art" style="--sprite:url(assets/sprites/lobby.png)"></span>
+          <span class="sprite person stroll" style="--src:url(assets/sprites/walk-civilian3.png);--dur:18s;--delay:-7s"></span>
+          <span class="sprite person stroll face-left" style="--src:url(assets/sprites/walk-civilian1.png);--dur:22s;--delay:-2s"></span>
+          <span class="sprite person stroll" style="--src:url(assets/sprites/walk-chef.png);--dur:27s;--delay:-19s"></span>
+        </div>
+      </section>
+
+      <span class="cab" aria-hidden="true"></span>
+    </div>
   </main>
 
-  <footer class="basement">
-    <span>© 2026 Pendium</span>
-    <span>Lofty Ambitions is made by <a href="/">Pendium</a>.</span>
-  </footer>
+  <div class="street" id="street">
+    <div class="sidewalk" aria-hidden="true"></div>
+    <section class="launch" aria-labelledby="launch-title">
+      <div>
+        <h2 id="launch-title">Doors open soon</h2>
+        <p>Lofty Ambitions is in development. Leave your email and we'll tell you when it launches.</p>
+      </div>
+      <!-- Buttondown username: replace "pendium" in the action URL if the
+           Buttondown account uses a different name. -->
+      <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/pendium" method="post"
+        data-signup>
+        <label for="email">Email address</label>
+        <div class="signup-row">
+          <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+          <input type="hidden" name="tag" value="lofty-ambitions" />
+          <button class="btn" type="submit">Notify me</button>
+        </div>
+        <p class="fine">One launch email. Unsubscribe any time.</p>
+      </form>
+    </section>
+    <footer class="footer">
+      <span>© 2026 Pendium</span>
+      <span>Lofty Ambitions is made by <a href="/">Pendium</a>.</span>
+    </footer>
+  </div>
 
   <nav class="elevator" aria-label="Floors">
     <div class="display" aria-hidden="true">
       <span class="arrow" data-arrow></span>
-      <span class="num" data-floor-num>R</span>
+      <span class="now" data-now>R</span>
     </div>
     <ul class="floor-buttons">
       <li><a href="#roof" data-go="roof" aria-label="Roof">R</a></li>
-      <li><a href="#f12" data-go="f12" aria-label="Floor 12, homes">12</a></li>
-      <li><a href="#f08" data-go="f08" aria-label="Floor 8, ramen bar">8</a></li>
+      <li><a href="#f10" data-go="f10" aria-label="Floor 10">10</a></li>
+      <li><a href="#f09" data-go="f09" aria-label="Floor 9">9</a></li>
+      <li><a href="#f08" data-go="f08" aria-label="Floor 8, empty lots">8</a></li>
+      <li><a href="#f07" data-go="f07" aria-label="Floor 7">7</a></li>
+      <li><a href="#f06" data-go="f06" aria-label="Floor 6, ramen bar">6</a></li>
+      <li><a href="#f05" data-go="f05" aria-label="Floor 5">5</a></li>
       <li><a href="#f04" data-go="f04" aria-label="Floor 4, pizza parlor">4</a></li>
+      <li><a href="#f03" data-go="f03" aria-label="Floor 3">3</a></li>
       <li><a href="#lobby" data-go="lobby" aria-label="Lobby">L</a></li>
     </ul>
     <button class="sound-btn" type="button" data-sound-toggle aria-pressed="false" aria-label="Music">
@@ -1358,8 +1411,6 @@
 
   <script>
     (function () {
-      const root = document.documentElement;
-      root.classList.add("js");
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const wait = (ms) => new Promise((r) => setTimeout(r, reduceMotion ? Math.min(ms, 150) : ms));
 
@@ -1369,7 +1420,7 @@
       const tracks = {};
       let ctx = null;
       let soundOn = false;
-      let wanted = null;
+      let current = null;
 
       function track(name) {
         if (!tracks[name]) {
@@ -1400,9 +1451,6 @@
       }
 
       function playTrack(name) {
-        wanted = name;
-        document.querySelectorAll(".floor").forEach((f) =>
-          f.classList.toggle("is-playing", soundOn && !!name && f.dataset.track === name));
         if (!soundOn) return;
         Object.keys(tracks).forEach((other) => {
           if (other !== name) fadeOut(other);
@@ -1439,6 +1487,15 @@
         });
       }
 
+      // The ramen bar plays its own song only with its lights on.
+      function trackFor(stop) {
+        if (!stop) return null;
+        if (stop.hasAttribute("data-needs-lights") && !stop.classList.contains("is-lit")) {
+          return stop.dataset.trackDark || null;
+        }
+        return stop.dataset.track || null;
+      }
+
       const toggles = document.querySelectorAll("[data-sound-toggle]");
       const toggleLabel = document.querySelector("[data-sound-label]");
 
@@ -1453,68 +1510,44 @@
           blip("fx-pop");
         } else if (ctx) {
           Object.keys(tracks).forEach(fadeOut);
-          playTrack(null);
         }
       }
 
       toggles.forEach((b) => b.addEventListener("click", () => setSound(!soundOn)));
 
-      // A floor plays its song while you are on it. The ramen bar plays only with its lights on.
-      function trackFor(stop) {
-        if (!stop || !stop.dataset.track) return null;
-        if (stop.hasAttribute("data-needs-lights") && !stop.classList.contains("is-lit")) return null;
-        return stop.dataset.track;
-      }
+      const say = (floor, text) => {
+        const s = floor.querySelector("[data-status]");
+        if (s) s.textContent = text;
+      };
 
-      /* ---------- 12F: build homes ---------- */
+      /* ---------- 8F: build homes ---------- */
       const build = document.querySelector("[data-build]");
       const buildFloor = build.closest(".floor");
-      const buildHint = buildFloor.querySelector("[data-hint]");
-      const buildReset = buildFloor.querySelector("[data-build-reset]");
       const lots = [...build.querySelectorAll(".lot")];
-      const LEFT = ["Two lots left.", "One lot left."];
 
-      lots.forEach((lot) => {
+      lots.forEach((lot, i) => {
         lot.addEventListener("click", async () => {
           if (lot.dataset.state !== "empty") return;
           lot.dataset.state = "building";
           lot.disabled = true;
-          buildHint.textContent = "Building…";
           blip("fx-thud", 0.5);
           await wait(900);
           lot.dataset.state = "built";
-          lot.setAttribute("aria-label", `Home ${lots.indexOf(lot) + 1}, built`);
+          lot.setAttribute("aria-label", `Home ${i + 1}, built`);
           blip("fx-coin", 0.6);
           const built = lots.filter((l) => l.dataset.state === "built").length;
+          say(buildFloor, built === lots.length ? "All three homes are built." : `Home ${i + 1} is built.`);
           if (built === lots.length) {
-            buildHint.textContent = "Three homes, three new tenants. The floor is full.";
-            buildReset.hidden = false;
             await wait(300);
             blip("fx-fanfare", 0.5);
-          } else {
-            buildHint.textContent = `A tenant moved in. ${LEFT[built - 1]}`;
           }
         });
       });
 
-      buildReset.addEventListener("click", () => {
-        lots.forEach((lot, i) => {
-          lot.dataset.state = "empty";
-          lot.disabled = false;
-          lot.setAttribute("aria-label", `Build home ${i + 1}`);
-        });
-        buildReset.hidden = true;
-        buildHint.textContent = "Tap a lot to build a home.";
-        blip("fx-crumble", 0.5);
-        lots[0].focus();
-      });
-
-      /* ---------- 8F: the ramen bar ---------- */
+      /* ---------- 6F: the ramen bar ---------- */
       const ramenBtn = document.querySelector("[data-ramen]");
       const ramenFloor = ramenBtn.closest(".floor");
-      const ramenArt = ramenFloor.querySelector(".art");
-      const ramenHint = ramenFloor.querySelector("[data-hint]");
-      const ramenSign = ramenBtn.querySelector(".ramen-sign");
+      const ramenArt = ramenFloor.querySelector(".ramen > .art");
 
       ramenBtn.addEventListener("click", () => {
         const lit = !ramenFloor.classList.contains("is-lit");
@@ -1522,46 +1555,42 @@
         ramenArt.style.setProperty("--row", lit ? 1 : 0);
         ramenBtn.setAttribute("aria-pressed", String(lit));
         ramenBtn.setAttribute("aria-label", lit ? "Turn off the ramen bar lights" : "Turn on the ramen bar lights");
+        say(ramenFloor, lit ? "The ramen bar is open." : "The ramen bar is closed.");
         if (lit) {
           // Opening the bar is a request for its song.
           if (!soundOn) setSound(true);
           blip("fx-pop", 0.5);
-          ramenHint.textContent = "Open for the night. Now playing Steam on the Counter. Tap again to close up.";
-        } else {
-          ramenHint.textContent = "Closed. Tap the ramen bar to open it again.";
         }
         if (current === ramenFloor) playTrack(trackFor(ramenFloor));
       });
-      ramenArt.style.setProperty("--row", 0);
 
       /* ---------- 4F: runaway meatballs ---------- */
       const pizza = document.querySelector("[data-pizza]");
       const pizzaFloor = pizza.closest(".floor");
-      const pizzaHint = pizzaFloor.querySelector("[data-hint]");
-      const callBtn = pizzaFloor.querySelector("[data-call-crew]");
-      const looseBtn = pizzaFloor.querySelector("[data-loose]");
+      const callBtn = pizza.querySelector("[data-call-crew]");
+      const looseBtn = pizza.querySelector("[data-loose]");
       const crew = pizza.querySelector(".crew");
       const meatballs = [...pizza.querySelectorAll(".meatball")];
+      const HOME_X = ["20%", "50%", "70%"];
       let mishapStarted = false;
 
       function setLoose() {
         pizza.classList.remove("meatballs-gathered", "meatballs-gone");
         pizza.classList.add("meatballs-loose");
         crew.className = "sprite person crew";
-        pizzaHint.textContent = "Runaway meatballs! Customers won't come in until someone catches them.";
         callBtn.hidden = false;
         looseBtn.hidden = true;
+        say(pizzaFloor, "Runaway meatballs in the pizza parlor.");
         blip("disaster-zing", 0.5);
       }
 
       callBtn.addEventListener("click", async () => {
         callBtn.hidden = true;
-        pizzaHint.textContent = "The cleanup crew is on the way.";
+        say(pizzaFloor, "The cleanup crew is on the way.");
         blip("fx-zip", 0.5);
         crew.className = "sprite person crew is-coming";
         await wait(2300);
         crew.className = "sprite person crew is-working";
-        pizzaHint.textContent = "Rounding them up…";
         // Freeze each meatball where it is, then slide it to the crew.
         const roomWidth = pizza.offsetWidth;
         meatballs.forEach((m) => m.style.setProperty("--x", `${(m.offsetLeft / roomWidth) * 100}%`));
@@ -1574,90 +1603,105 @@
         blip("fx-coin", 0.6);
         await wait(400);
         crew.className = "sprite person crew is-leaving";
-        pizzaHint.textContent = "All caught. The pizza parlor is open again.";
-        looseBtn.hidden = false;
+        say(pizzaFloor, "All the meatballs are caught.");
         await wait(2500);
         crew.className = "sprite person crew";
         pizza.classList.remove("meatballs-gathered");
-        meatballs.forEach((m, i) => m.style.setProperty("--x", ["20%", "50%", "70%"][i]));
+        meatballs.forEach((m, i) => m.style.setProperty("--x", HOME_X[i]));
+        looseBtn.hidden = false;
       });
 
       looseBtn.addEventListener("click", setLoose);
 
-      /* ---------- scroll: the elevator panel and music ---------- */
+      /* ---------- the elevator: panel, display and the cab in the shaft ---------- */
       const roof = document.getElementById("roof");
+      const street = document.getElementById("street");
+      const floorsEl = document.querySelector(".floors");
       const floors = [...document.querySelectorAll(".floor")];
       const stops = [roof, ...floors];
-      const numEl = document.querySelector("[data-floor-num]");
+      const shaftFloors = floors.filter((f) => f.querySelector(".part--shaft"));
+      const cab = document.querySelector(".cab");
+      const nowEl = document.querySelector("[data-now]");
       const arrowEl = document.querySelector("[data-arrow]");
       const buttons = [...document.querySelectorAll("[data-go]")];
-      const floorNumber = (el) => (el.dataset.floor === "R" ? 16 : Number(el.dataset.floor));
-      let lastY = window.scrollY;
-      let current = null;
-      let settleTimer = null;
+      let cabFloor = null;
       let ticking = false;
 
-      function update() {
-        ticking = false;
-        const vh = window.innerHeight;
-        const y = window.scrollY;
-        const mid = vh / 2;
+      // Put the cab in the shaft of a floor.
+      function placeCab(floor, animate) {
+        const shaft = floor.querySelector(".part--shaft");
+        const box = floorsEl.getBoundingClientRect();
+        const r = shaft.getBoundingClientRect();
+        const unit = r.height / 88;
+        cab.style.width = `${48 * unit}px`;
+        cab.style.height = `${60 * unit}px`;
+        cab.style.left = `${r.left - box.left + 8 * unit}px`;
+        const top = r.top - box.top + 24 * unit;
+        if (!animate || reduceMotion) {
+          cab.style.transition = "none";
+          cab.style.top = `${top}px`;
+          void cab.offsetWidth;
+          cab.style.transition = "";
+          return;
+        }
+        const prev = parseFloat(cab.style.top) || top;
+        if (Math.abs(prev - top) < 1) return;
+        arrowEl.textContent = top > prev ? "▼" : "▲";
+        cab.classList.add("is-moving");
+        cab.style.top = `${top}px`;
+      }
 
-        floors.forEach((floor) => {
-          const r = floor.getBoundingClientRect();
-          const t = (vh - r.top) / (vh + r.height);
-          if (t < -0.05 || t > 1.05) return;
-          // The meatballs get loose the first time you reach the pizza parlor.
-          if (floor === pizzaFloor && !mishapStarted && t > 0.3) {
-            mishapStarted = true;
-            setLoose();
-          }
-        });
+      cab.addEventListener("transitionend", () => {
+        cab.classList.remove("is-moving");
+        arrowEl.textContent = "";
+        ding();
+      });
 
+      function nearestStop() {
+        const mid = window.innerHeight / 2;
+        // Past the lobby, the street counts as the lobby.
+        if (street.getBoundingClientRect().top < mid) return floors[floors.length - 1];
         let best = stops[0];
         let bestDist = Infinity;
         stops.forEach((s) => {
           const r = s.getBoundingClientRect();
-          const d = Math.abs(r.top + Math.min(r.height, vh) / 2 - mid);
+          const d = Math.abs(r.top + r.height / 2 - mid);
           if (d < bestDist) {
             bestDist = d;
             best = s;
           }
         });
+        return best;
+      }
 
-        let num = floorNumber(stops[0]);
-        for (let i = 0; i < stops.length - 1; i += 1) {
-          const a = stops[i].getBoundingClientRect();
-          const b = stops[i + 1].getBoundingClientRect();
-          const ay = a.top + Math.min(a.height, vh) / 2;
-          const by = b.top + Math.min(b.height, vh) / 2;
-          if (mid >= ay && mid <= by) {
-            const f = (mid - ay) / (by - ay || 1);
-            num = Math.round(floorNumber(stops[i]) + (floorNumber(stops[i + 1]) - floorNumber(stops[i])) * f);
-            break;
+      function update() {
+        ticking = false;
+
+        // The meatballs get loose the first time the pizza parlor is in view.
+        if (!mishapStarted) {
+          const r = pizzaFloor.getBoundingClientRect();
+          if (r.top < window.innerHeight * 0.7 && r.bottom > 0) {
+            mishapStarted = true;
+            setLoose();
           }
-          if (i === stops.length - 2 && mid > by) num = 1;
-        }
-        if (y < 40) num = 16;
-        numEl.textContent = num >= 16 ? "R" : num <= 1 ? "L" : String(num);
-        arrowEl.textContent = y > lastY + 1 ? "▼" : y < lastY - 1 ? "▲" : "";
-        lastY = y;
-
-        if (best !== current) {
-          current = best;
-          buttons.forEach((b) => b.setAttribute("aria-current", String(b.dataset.go === current.id)));
-          playTrack(trackFor(current));
         }
 
-        clearTimeout(settleTimer);
-        settleTimer = setTimeout(() => {
-          arrowEl.textContent = "";
-          if (current && current.dataset.dinged !== "1") {
-            stops.forEach((s) => delete s.dataset.dinged);
-            current.dataset.dinged = "1";
-            ding();
-          }
-        }, 350);
+        const stop = nearestStop();
+        if (stop === current) return;
+        if (current) current.classList.remove("is-current");
+        current = stop;
+        current.classList.add("is-current");
+        nowEl.textContent = current.dataset.label;
+        buttons.forEach((b) => b.setAttribute("aria-current", String(b.dataset.go === current.id)));
+        playTrack(trackFor(current));
+
+        // The cab serves the floors with a shaft. From the roof it waits at the top, from the lobby at the bottom.
+        const target = current === roof ? shaftFloors[0]
+          : shaftFloors.includes(current) ? current : shaftFloors[shaftFloors.length - 1];
+        if (target !== cabFloor) {
+          cabFloor = target;
+          placeCab(target, true);
+        }
       }
 
       function requestUpdate() {
@@ -1667,21 +1711,15 @@
         }
       }
 
-      // On a phone each room scrolls sideways. Start it centred so its sign shows.
-      function centreRooms() {
-        document.querySelectorAll(".room-window").forEach((w) => {
-          w.scrollLeft = (w.scrollWidth - w.clientWidth) / 2;
-        });
-      }
-      centreRooms();
+      cabFloor = shaftFloors[0];
+      placeCab(cabFloor, false);
+      update();
 
       window.addEventListener("scroll", requestUpdate, { passive: true });
       window.addEventListener("resize", () => {
-        centreRooms();
+        placeCab(cabFloor, false);
         requestUpdate();
       });
-      roof.dataset.dinged = "1";
-      update();
 
       buttons.forEach((b) => {
         b.addEventListener("click", (event) => {
@@ -1689,7 +1727,7 @@
           if (!target) return;
           event.preventDefault();
           blip("fx-zip", 0.5);
-          target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+          target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
           history.replaceState(null, "", `#${b.dataset.go}`);
         });
       });
