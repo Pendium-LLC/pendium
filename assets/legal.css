@@ -1,0 +1,228 @@
+/* The privacy policy and the terms of service. Colors and type follow the home page. */
+:root {
+  color-scheme: dark;
+  --bg-hi: #232329;
+  --bg: #131316;
+  --bg-lo: #0b0b0e;
+  --panel: #18181d;
+  --fg: #ededef;
+  --fg-dim: #b9b9c0;
+  --fg-faint: #85858e;
+  --line: rgba(237, 237, 239, 0.14);
+  --sans: "Outfit", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(120vmax 80vmax at 70% -10%, var(--bg-hi) 0%, var(--bg) 45%, var(--bg-lo) 100%) fixed;
+  color: var(--fg);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 34px 0 0;
+}
+
+.wordmark {
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+}
+
+.wordmark .tick {
+  color: var(--fg-faint);
+}
+
+.header-mail {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--fg-faint);
+  text-decoration: none;
+}
+
+.header-mail:hover {
+  color: var(--fg);
+}
+
+/* ---------- the document ---------- */
+
+main {
+  padding: 72px 0 88px;
+}
+
+h1 {
+  font-size: clamp(40px, 6vw, 68px);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  margin: 0 0 14px;
+}
+
+.effective {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--fg-faint);
+  margin: 0 0 12px;
+}
+
+.legal {
+  max-width: 70ch;
+  font-size: 17px;
+  color: var(--fg-dim);
+}
+
+.legal h2 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 56px 0 12px;
+  scroll-margin-top: 24px;
+}
+
+.legal h3 {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--fg);
+  margin: 28px 0 6px;
+}
+
+.legal p {
+  margin: 14px 0 0;
+}
+
+.legal ul,
+.legal ol {
+  margin: 14px 0 0;
+  padding-left: 22px;
+}
+
+.legal li {
+  margin-top: 8px;
+}
+
+.legal strong {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.legal a {
+  color: var(--fg);
+  text-decoration-color: var(--fg-faint);
+  text-underline-offset: 3px;
+}
+
+.legal a:hover {
+  text-decoration-color: var(--fg);
+}
+
+/* A short summary or a clause the reader must not miss. */
+.callout {
+  margin: 28px 0 0;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--fg);
+}
+
+.callout > :first-child {
+  margin-top: 0;
+}
+
+.legal .toc {
+  margin: 32px 0 0;
+  padding: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: 32px;
+  font-size: 15px;
+}
+
+.legal .toc li {
+  margin: 0 0 6px;
+  break-inside: avoid;
+}
+
+.toc a {
+  color: var(--fg-dim);
+  text-decoration: none;
+}
+
+.toc a:hover {
+  color: var(--fg);
+  text-decoration: underline;
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  padding: 26px 0 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  justify-content: space-between;
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--fg-faint);
+}
+
+footer a {
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: var(--fg);
+}
+
+footer nav {
+  display: flex;
+  gap: 20px;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 0 16px;
+  }
+
+  main {
+    padding: 48px 0 64px;
+  }
+
+  .legal {
+    font-size: 16px;
+  }
+
+  .legal .toc {
+    columns: 1;
+  }
+}
